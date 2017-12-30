@@ -337,7 +337,7 @@ fn main() {
         ingredients: vec![
             Ingredient {
                 material: Material::Joule,
-                quantity: 1_800_000.0,
+                quantity: 0.5*boiler_mk1_burning_carbon.energy_consumption,
             },
         ],
         time: 1.0,
