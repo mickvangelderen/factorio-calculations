@@ -1,6 +1,6 @@
 #![allow(unused_variables)]
 
-#[derive(Debug, Eq, PartialEq, Hash, Copy, Clone)]
+#[derive(Debug, Eq, PartialEq, Hash, Ord, PartialOrd, Copy, Clone)]
 pub enum Material {
     Water,
     MineralizedWater,
@@ -52,6 +52,7 @@ pub struct Process {
 
 #[derive(Debug)]
 pub struct Processor {
+    name: String,
     speed: f64,
     energy_consumption: f64,
     energy_source: Material,
@@ -60,14 +61,16 @@ pub struct Processor {
 
 fn main() {
     // Processors.
-    let boiler_mk1 = Processor {
-        speed: 3_600_000.0,
-        energy_consumption: 1_800_000.0,
-        energy_source: Material::Joule,
+    let boiler_mk1_burning_carbon = Processor {
+        name: String::from("boiler_mk1_burning_carbon"),
+        speed: 1.0,
+        energy_consumption: 3_600_000.0,
+        energy_source: Material::Carbon,
         drain: 0.0,
     };
 
     let assembly_machine_mk1 = Processor {
+        name: String::from("assembly_machine_mk1"),
         speed: 0.5,
         energy_consumption: 100_000.0,
         energy_source: Material::Joule,
@@ -75,6 +78,7 @@ fn main() {
     };
 
     let flare_stack = Processor {
+        name: String::from("flare_stack"),
         speed: 2.0,
         energy_consumption: 30_000.0,
         energy_source: Material::Joule,
@@ -82,6 +86,7 @@ fn main() {
     };
 
     let algae_farm_mk1 = Processor {
+        name: String::from("algae_farm_mk1"),
         speed: 1.0,
         energy_consumption: 120_000.0,
         energy_source: Material::Joule,
@@ -89,6 +94,7 @@ fn main() {
     };
 
     let electrolyser_mk1 = Processor {
+        name: String::from("electrolyser_mk1"),
         speed: 1.0,
         energy_consumption: 300_000.0,
         energy_source: Material::Joule,
@@ -96,6 +102,7 @@ fn main() {
     };
 
     let liquifier_mk1 = Processor {
+        name: String::from("liquifier_mk1"),
         speed: 1.5,
         energy_consumption: 125_000.0,
         energy_source: Material::Joule,
@@ -103,6 +110,7 @@ fn main() {
     };
 
     let ore_crusher_mk1 = Processor {
+        name: String::from("ore_crusher_mk1"),
         speed: 1.5,
         energy_consumption: 100_000.0,
         energy_source: Material::Joule,
@@ -110,6 +118,7 @@ fn main() {
     };
 
     let stone_oven_burning_carbon = Processor {
+        name: String::from("stone_oven_burning_carbon"),
         speed: 1.0,
         energy_consumption: 180_000.0,
         energy_source: Material::Carbon,
@@ -117,6 +126,7 @@ fn main() {
     };
 
     let offshore_pump = Processor {
+        name: String::from("offshor_pump"),
         speed: 1200.0,
         energy_consumption: 0.0,
         energy_source: Material::Joule,
@@ -322,15 +332,12 @@ fn main() {
         time: 2.0,
     };
 
-    let carbon_to_steam = Process {
+    let boiler_mk1_carbon_to_power = Process {
+        // 50% efficiency.
         ingredients: vec![
             Ingredient {
-                material: Material::Carbon,
-                quantity: -1.0/Material::Carbon.joules(),
-            },
-            Ingredient {
                 material: Material::Joule,
-                quantity: 1.0,
+                quantity: 1_800_000.0,
             },
         ],
         time: 1.0,
@@ -436,16 +443,21 @@ fn main() {
             process: &coke_to_carbon,
         },
         Group {
-            quantity: 24.0 / (1.0/Material::Carbon.joules()) * carbon_to_steam.time / boiler_mk1.speed,
-            processor: &boiler_mk1,
-            process: &carbon_to_steam,
+            quantity: 28.0 / (3.6 /* J/s/boiler */ / 6.0 /* J/carbon */) * boiler_mk1_carbon_to_power.time / boiler_mk1_burning_carbon.speed,
+            processor: &boiler_mk1_burning_carbon,
+            process: &boiler_mk1_carbon_to_power,
         },
     ];
+
+    for group in &groups {
+        println!("{} x {} performing {:#?}", group.quantity, group.processor.name, group.process);
+    }
 
     // println!("{:#?}", &groups);
 
     let balance = accumulate_groups(&groups);
-    println!("Material balance per second: {:#?}", balance);
+    println!("Material (production, consumption) per second: {:#?}", balance);
+
 }
 
 #[derive(Debug)]
@@ -455,8 +467,8 @@ struct Group<'a> {
     process: &'a Process,
 }
 
-fn accumulate_groups(groups: &Vec<Group>) -> std::collections::HashMap<Material, (f64, f64)> {
-    let mut map = std::collections::HashMap::<Material, (f64, f64)>::new();
+fn accumulate_groups(groups: &Vec<Group>) -> std::collections::BTreeMap<Material, (f64, f64)> {
+    let mut map = std::collections::BTreeMap::<Material, (f64, f64)>::new();
 
     for group in groups {
         let quantity = group.quantity;
