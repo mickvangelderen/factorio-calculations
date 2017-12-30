@@ -69,6 +69,14 @@ fn main() {
         drain: 0.0,
     };
 
+    let boiler_mk2_burning_carbon = Processor {
+        name: String::from("boiler_mk2_burning_carbon"),
+        speed: 1.0,
+        energy_consumption: 3_600_000.0,
+        energy_source: Material::Carbon,
+        drain: 0.0,
+    };
+
     let assembly_machine_mk1 = Processor {
         name: String::from("assembly_machine_mk1"),
         speed: 0.5,
@@ -338,6 +346,17 @@ fn main() {
             Ingredient {
                 material: Material::Joule,
                 quantity: 0.5*boiler_mk1_burning_carbon.energy_consumption,
+            },
+        ],
+        time: 1.0,
+    };
+
+    let boiler_mk2_carbon_to_power = Process {
+        // 60% efficiency.
+        ingredients: vec![
+            Ingredient {
+                material: Material::Joule,
+                quantity: 0.6*boiler_mk2_burning_carbon.energy_consumption,
             },
         ],
         time: 1.0,
