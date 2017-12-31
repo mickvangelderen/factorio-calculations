@@ -19,6 +19,11 @@ pub enum Material {
     Oxygen,
     CarbonDioxide,
     Joule,
+    ViscousMudWater,
+    HeavyMudWater,
+    ConcentratedMudWater,
+    Mud,
+    Nodule,
 }
 
 impl Material {
@@ -60,6 +65,11 @@ pub struct Processor {
 }
 
 fn main() {
+    // early_energy();
+    nodules();
+}
+
+fn early_energy() {
     // Processors.
     let boiler_mk1_burning_carbon = Processor {
         name: String::from("boiler_mk1_burning_carbon"),
@@ -520,4 +530,124 @@ fn accumulate_groups(groups: &Vec<Group>) -> std::collections::BTreeMap<Material
     }
 
     map
+}
+
+fn nodules() {
+    // Processors.
+    let seafloor_pump = Processor {
+        name: String::from("seafloor_pump"),
+        speed: 300.0,
+        energy_consumption: 0.0,
+        energy_source: Material::Joule,
+        drain: 0.0,
+    };
+
+    let washing_plant_mk1 = Processor {
+        name: String::from("washing_plant_mk1"),
+        speed: 1.5,
+        energy_consumption: 100_000.0,
+        energy_source: Material::Joule,
+        drain: 3_300.0,
+    };
+
+    // Processes.
+    let pump_viscous_mud_water = Process {
+        ingredients: vec![
+            Ingredient {
+                material: Material::ViscousMudWater,
+                quantity: 1.0,
+            },
+        ],
+        time: 1.0,
+    };
+
+    let wash_viscous_mud_water = Process {
+        ingredients: vec![
+            Ingredient {
+                material: Material::ViscousMudWater,
+                quantity: -100.0,
+            },
+            Ingredient {
+                material: Material::Water,
+                quantity: -50.0,
+            },
+            Ingredient {
+                material: Material::HeavyMudWater,
+                quantity: 100.0,
+            },
+            Ingredient {
+                material: Material::Mud,
+                quantity: 1.0,
+            },
+        ],
+        time: 5.0,
+    };
+
+    let wash_heavy_mud_water = Process {
+        ingredients: vec![
+            Ingredient {
+                material: Material::HeavyMudWater,
+                quantity: -100.0,
+            },
+            Ingredient {
+                material: Material::Water,
+                quantity: -50.0,
+            },
+            Ingredient {
+                material: Material::ConcentratedMudWater,
+                quantity: 100.0,
+            },
+            Ingredient {
+                material: Material::Mud,
+                quantity: 1.0,
+            },
+        ],
+        time: 5.0,
+    };
+
+    let heavy_mud_water_to_nodule = Process {
+        ingredients: vec![
+            Ingredient {
+                material: Material::HeavyMudWater,
+                quantity: -40.0,
+            },
+            Ingredient {
+                material: Material::Water,
+                quantity: -25.0,
+            },
+            Ingredient {
+                material: Material::Nodule,
+                quantity: 1.0,
+            },
+        ],
+        time: 5.0,
+    };
+
+    // Setup.
+    let groups = vec![
+        Group {
+            quantity: 1.0,
+            processor: &seafloor_pump,
+            process: &pump_viscous_mud_water,
+        },
+        Group {
+            quantity: 300.0/(100.0/wash_viscous_mud_water.time*washing_plant_mk1.speed),
+            processor: &washing_plant_mk1,
+            process: &wash_viscous_mud_water,
+        },
+        Group {
+            quantity: 300.0/(40.0/heavy_mud_water_to_nodule.time*washing_plant_mk1.speed),
+            processor: &washing_plant_mk1,
+            process: &heavy_mud_water_to_nodule,
+        },
+    ];
+
+    for group in &groups {
+        println!("{} x {} performing {:#?}", group.quantity, group.processor.name, group.process);
+    }
+
+    // println!("{:#?}", &groups);
+
+    let balance = accumulate_groups(&groups);
+    println!("Material (production, consumption) per second: {:#?}", balance);
 }
