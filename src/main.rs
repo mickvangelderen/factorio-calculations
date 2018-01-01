@@ -1,9 +1,14 @@
 #![allow(unused)]
+#![allow(non_upper_case_globals)]
 
 extern crate rulinalg;
 
 use rulinalg::matrix::*;
 use rulinalg::vector::*;
+
+mod processors;
+
+use processors::*;
 
 #[derive(Debug, Eq, PartialEq, Hash, Ord, PartialOrd, Copy, Clone)]
 pub enum Material {
@@ -63,7 +68,7 @@ pub struct Process {
 
 #[derive(Debug)]
 pub struct Processor {
-    name: String,
+    name: &'static str,
     speed: f64,
     energy_consumption: f64,
     energy_source: Material,
@@ -76,87 +81,6 @@ fn main() {
 }
 
 fn early_energy() {
-    // Processors.
-    let boiler_mk1_burning_carbon = Processor {
-        name: String::from("boiler_mk1_burning_carbon"),
-        speed: 1.0,
-        energy_consumption: 3_600_000.0,
-        energy_source: Material::Carbon,
-        drain: 0.0,
-    };
-
-    let boiler_mk2_burning_carbon = Processor {
-        name: String::from("boiler_mk2_burning_carbon"),
-        speed: 1.0,
-        energy_consumption: 3_600_000.0,
-        energy_source: Material::Carbon,
-        drain: 0.0,
-    };
-
-    let assembly_machine_mk1 = Processor {
-        name: String::from("assembly_machine_mk1"),
-        speed: 0.5,
-        energy_consumption: 100_000.0,
-        energy_source: Material::Joule,
-        drain: 3_300.0,
-    };
-
-    let flare_stack = Processor {
-        name: String::from("flare_stack"),
-        speed: 2.0,
-        energy_consumption: 30_000.0,
-        energy_source: Material::Joule,
-        drain: 1_000.0,
-    };
-
-    let algae_farm_mk1 = Processor {
-        name: String::from("algae_farm_mk1"),
-        speed: 1.0,
-        energy_consumption: 120_000.0,
-        energy_source: Material::Joule,
-        drain: 4_000.0,
-    };
-
-    let electrolyser_mk1 = Processor {
-        name: String::from("electrolyser_mk1"),
-        speed: 1.0,
-        energy_consumption: 300_000.0,
-        energy_source: Material::Joule,
-        drain: 10_000.0,
-    };
-
-    let liquifier_mk1 = Processor {
-        name: String::from("liquifier_mk1"),
-        speed: 1.5,
-        energy_consumption: 125_000.0,
-        energy_source: Material::Joule,
-        drain: 4_100.0,
-    };
-
-    let ore_crusher_mk1 = Processor {
-        name: String::from("ore_crusher_mk1"),
-        speed: 1.5,
-        energy_consumption: 100_000.0,
-        energy_source: Material::Joule,
-        drain: 3_300.0,
-    };
-
-    let stone_oven_burning_carbon = Processor {
-        name: String::from("stone_oven_burning_carbon"),
-        speed: 1.0,
-        energy_consumption: 180_000.0,
-        energy_source: Material::Carbon,
-        drain: 0.0,
-    };
-
-    let offshore_pump = Processor {
-        name: String::from("offshor_pump"),
-        speed: 1200.0,
-        energy_consumption: 0.0,
-        energy_source: Material::Joule,
-        drain: 0.0,
-    };
-
     // Processes.
     let water_pumping = Process {
         name: String::from("water_pumping"),
@@ -417,84 +341,84 @@ fn early_energy() {
 
     // Do things.
     let groups = vec![
-        Group {
+        FixedGroup {
             quantity: 3.0,
             processor: &offshore_pump,
             process: &water_pumping,
         },
-        Group {
+        FixedGroup {
             quantity: 675.0 / (flare_stack.speed * 100.0),
             processor: &flare_stack,
             process: &burn_oxygen,
         },
-        Group {
+        FixedGroup {
             quantity: 900.0 / (flare_stack.speed * 100.0),
             processor: &flare_stack,
             process: &burn_hydrogen,
         },
-        Group {
+        FixedGroup {
             quantity: 22.5,
             processor: &electrolyser_mk1,
             process: &dirt_water_electrolysis,
         },
-        Group {
+        FixedGroup {
             quantity: 15.0,
             processor: &ore_crusher_mk1,
             process: &stone_crushing,
         },
-        Group {
+        FixedGroup {
             quantity: 3.0,
             processor: &liquifier_mk1,
             process: &water_mineralization,
         },
-        Group {
+        FixedGroup {
             quantity: 90.0,
             processor: &algae_farm_mk1,
             process: &green_algae_growing,
         },
-        Group {
+        FixedGroup {
             quantity: 180.0 / (liquifier_mk1.speed / green_algae_to_fiber.time * 10.0),
             processor: &liquifier_mk1,
             process: &green_algae_to_fiber,
         },
-        Group {
+        FixedGroup {
             quantity: 90.0 / (assembly_machine_mk1.speed / fiber_to_wood_pellet.time * 12.0),
             processor: &assembly_machine_mk1,
             process: &fiber_to_wood_pellet,
         },
-        Group {
+        FixedGroup {
             quantity: 15.0 / (assembly_machine_mk1.speed / wood_pellet_to_wood_brick.time * 8.0),
             processor: &assembly_machine_mk1,
             process: &wood_pellet_to_wood_brick,
         },
-        Group {
+        FixedGroup {
             quantity: 7.5 / (stone_oven_burning_carbon.speed / wood_brick_to_coal.time * 1.0),
             processor: &stone_oven_burning_carbon,
             process: &wood_brick_to_coal,
         },
-        Group {
+        FixedGroup {
             // Desired 450 for algae farms.
             quantity: (450.0 + 350.0) / (liquifier_mk1.speed / coal_to_carbon_dioxide.time * 50.0),
             processor: &liquifier_mk1,
             process: &coal_to_carbon_dioxide,
         },
-        Group {
+        FixedGroup {
             // Say we use only 5 coal.
             quantity: 5.0 / 1.0 * coal_to_crushed_coal.time / ore_crusher_mk1.speed,
             processor: &ore_crusher_mk1,
             process: &coal_to_crushed_coal,
         },
-        Group {
+        FixedGroup {
             quantity: 10.0 / 1.0 * burn_crushed_coal_to_coke.time / stone_oven_burning_carbon.speed,
             processor: &stone_oven_burning_carbon,
             process: &burn_crushed_coal_to_coke,
         },
-        Group {
+        FixedGroup {
             quantity: 10.0 / 1.0 * coke_to_carbon.time / liquifier_mk1.speed,
             processor: &liquifier_mk1,
             process: &coke_to_carbon,
         },
-        Group {
+        FixedGroup {
             quantity: 28.0 / (3.6 /* J/s/boiler */ / 6.0 /* J/carbon */) *
                 boiler_mk1_carbon_to_power.time /
                 boiler_mk1_burning_carbon.speed,
@@ -523,13 +447,13 @@ fn early_energy() {
 }
 
 #[derive(Debug)]
-struct Group<'a> {
+struct FixedGroup<'a> {
     quantity: f64,
     processor: &'a Processor,
     process: &'a Process,
 }
 
-fn accumulate_groups(groups: &Vec<Group>) -> std::collections::BTreeMap<Material, (f64, f64)> {
+fn accumulate_groups(groups: &Vec<FixedGroup>) -> std::collections::BTreeMap<Material, (f64, f64)> {
     let mut map = std::collections::BTreeMap::<Material, (f64, f64)>::new();
 
     for group in groups {
@@ -565,26 +489,7 @@ fn accumulate_groups(groups: &Vec<Group>) -> std::collections::BTreeMap<Material
     map
 }
 
-// use std::io::prelude::*;
-
 fn nodules() {
-    // Processors.
-    let seafloor_pump = Processor {
-        name: String::from("seafloor_pump"),
-        speed: 300.0,
-        energy_consumption: 0.0,
-        energy_source: Material::Joule,
-        drain: 0.0,
-    };
-
-    let washing_plant_mk1 = Processor {
-        name: String::from("washing_plant_mk1"),
-        speed: 1.5,
-        energy_consumption: 100_000.0,
-        energy_source: Material::Joule,
-        drain: 3_300.0,
-    };
-
     // Processes.
     let pump_viscous_mud_water = Process {
         name: String::from("pump_viscous_mud_water"),
@@ -662,11 +567,6 @@ fn nodules() {
         time: 5.0,
     };
 
-    struct Group<'a> {
-        quantity: Option<f64>,
-        processor: &'a Processor,
-        process: &'a Process,
-    };
 
     // Setup.
     let groups = vec![
@@ -687,6 +587,24 @@ fn nodules() {
         },
     ];
 
+    let fixed_materials = vec![
+        (Material::HeavyMudWater, 0.0),
+        (Material::ViscousMudWater, 0.0),
+    ];
+
+    solve_and_print(groups, fixed_materials);
+}
+
+struct Group<'a> {
+    quantity: Option<f64>,
+    processor: &'a Processor,
+    process: &'a Process,
+}
+
+fn solve_and_print(groups: Vec<Group>, fixed_materials: Vec<(Material, f64)>) {
+    let fixed_processes: Vec<(usize, f64)> = groups.iter().enumerate().filter_map(|(i, g)| g.quantity.map(|q| (i, q))).collect();
+
+
     let mut material_to_row = std::collections::BTreeMap::<Material, usize>::new();
 
     for group in &groups {
@@ -701,13 +619,6 @@ fn nodules() {
     for (index, (material, row)) in material_to_row.iter_mut().enumerate() {
         *row = index
     }
-
-    let fixed_processes: Vec<(usize, f64)> = groups.iter().enumerate().filter_map(|(i, g)| g.quantity.map(|q| (i, q))).collect();
-
-    let fixed_materials = vec![
-        (Material::HeavyMudWater, 0.0),
-        (Material::ViscousMudWater, 0.0),
-    ];
 
     // Recipe matrix.
     #[allow(non_snake_case)]
@@ -777,7 +688,7 @@ fn nodules() {
 
     println!("Setup");
     for (i, group) in groups.iter().enumerate() {
-        println!("{:.2} x {} performing {}", x[i], group.processor.name, group.process.name);
+        println!("{:.2} x {} ({})", x[i], group.process.name, group.processor.name);
     }
 
     println!();
