@@ -73,7 +73,7 @@ pub static stone_oven_burning_carbon: Processor = Processor {
 };
 
 pub static offshore_pump: Processor = Processor {
-    name: "offshor_pump",
+    name: "offshore_pump",
     speed: 1200.0,
     energy_consumption: 0.0,
     energy_source: Material::Joule,
