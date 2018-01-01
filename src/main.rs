@@ -1,29 +1,34 @@
-#![allow(unused_variables)]
+#![allow(unused)]
+
+extern crate rulinalg;
+
+use rulinalg::matrix::*;
+use rulinalg::vector::*;
 
 #[derive(Debug, Eq, PartialEq, Hash, Ord, PartialOrd, Copy, Clone)]
 pub enum Material {
-    Water,
-    MineralizedWater,
-    CrushedStone,
-    GreenAlgae,
-    Fiber,
-    WoodPellet,
-    WoodBrick,
+    Carbon,
+    CarbonDioxide,
     Coal,
-    CrushedCoal,
     Coke,
     CokePellet,
-    Carbon,
-    Slag,
-    Hydrogen,
-    Oxygen,
-    CarbonDioxide,
-    Joule,
-    ViscousMudWater,
-    HeavyMudWater,
     ConcentratedMudWater,
+    CrushedCoal,
+    CrushedStone,
+    Fiber,
+    GreenAlgae,
+    HeavyMudWater,
+    Hydrogen,
+    Joule,
+    MineralizedWater,
     Mud,
     Nodule,
+    Oxygen,
+    Slag,
+    ViscousMudWater,
+    Water,
+    WoodBrick,
+    WoodPellet,
 }
 
 impl Material {
@@ -31,13 +36,13 @@ impl Material {
         use Material::*;
 
         match *self {
-            Fiber => 1_000_000.0,
-            WoodPellet => 12_000_000.0,
+            Carbon => 6_000_000.0,
             Coal => 8_000_000.0,
             Coke => 5_000_000.0,
             CokePellet => 30_000_000.0,
-            Carbon => 6_000_000.0,
+            Fiber => 1_000_000.0,
             Joule => 1.0,
+            WoodPellet => 12_000_000.0,
             _ => 0.0,
         }
     }
@@ -51,6 +56,7 @@ pub struct Ingredient {
 
 #[derive(Debug)]
 pub struct Process {
+    name: String,
     ingredients: Vec<Ingredient>,
     time: f64,
 }
@@ -153,6 +159,7 @@ fn early_energy() {
 
     // Processes.
     let water_pumping = Process {
+        name: String::from("water_pumping"),
         ingredients: vec![
             Ingredient {
                 material: Material::Water,
@@ -163,6 +170,7 @@ fn early_energy() {
     };
 
     let dirt_water_electrolysis = Process {
+        name: String::from("dirt_water_electrolysis"),
         ingredients: vec![
             Ingredient {
                 material: Material::Water,
@@ -185,6 +193,7 @@ fn early_energy() {
     };
 
     let stone_crushing = Process {
+        name: String::from("stone_crushing"),
         ingredients: vec![
             Ingredient {
                 material: Material::Slag,
@@ -199,6 +208,7 @@ fn early_energy() {
     };
 
     let water_mineralization = Process {
+        name: String::from("water_mineralization"),
         ingredients: vec![
             Ingredient {
                 material: Material::CrushedStone,
@@ -217,6 +227,7 @@ fn early_energy() {
     };
 
     let green_algae_growing = Process {
+        name: String::from("green_algae_growing"),
         ingredients: vec![
             Ingredient {
                 material: Material::MineralizedWater,
@@ -235,6 +246,7 @@ fn early_energy() {
     };
 
     let green_algae_to_fiber = Process {
+        name: String::from("green_algae_to_fiber"),
         ingredients: vec![
             Ingredient {
                 material: Material::GreenAlgae,
@@ -249,6 +261,7 @@ fn early_energy() {
     };
 
     let fiber_to_wood_pellet = Process {
+        name: String::from("fiber_to_wood_pellet"),
         ingredients: vec![
             Ingredient {
                 material: Material::Fiber,
@@ -263,6 +276,7 @@ fn early_energy() {
     };
 
     let wood_pellet_to_wood_brick = Process {
+        name: String::from("wood_pellet_to_wood_brick"),
         ingredients: vec![
             Ingredient {
                 material: Material::WoodPellet,
@@ -277,6 +291,7 @@ fn early_energy() {
     };
 
     let wood_brick_to_coal = Process {
+        name: String::from("wood_brick_to_coal"),
         ingredients: vec![
             Ingredient {
                 material: Material::WoodBrick,
@@ -291,6 +306,7 @@ fn early_energy() {
     };
 
     let coal_to_carbon_dioxide = Process {
+        name: String::from("coal_to_carbon_dioxide"),
         ingredients: vec![
             Ingredient {
                 material: Material::Coal,
@@ -305,6 +321,7 @@ fn early_energy() {
     };
 
     let coal_to_crushed_coal = Process {
+        name: String::from("coal_to_crushed_coal"),
         ingredients: vec![
             Ingredient {
                 material: Material::Coal,
@@ -319,6 +336,7 @@ fn early_energy() {
     };
 
     let burn_crushed_coal_to_coke = Process {
+        name: String::from("burn_crushed_coal_to_coke"),
         ingredients: vec![
             Ingredient {
                 material: Material::CrushedCoal,
@@ -333,6 +351,7 @@ fn early_energy() {
     };
 
     let coke_to_carbon = Process {
+        name: String::from("coke_to_carbon"),
         ingredients: vec![
             Ingredient {
                 material: Material::Coke,
@@ -351,28 +370,31 @@ fn early_energy() {
     };
 
     let boiler_mk1_carbon_to_power = Process {
+        name: String::from("boiler_mk1_carbon_to_power"),
         // 50% efficiency.
         ingredients: vec![
             Ingredient {
                 material: Material::Joule,
-                quantity: 0.5*boiler_mk1_burning_carbon.energy_consumption,
+                quantity: 0.5 * boiler_mk1_burning_carbon.energy_consumption,
             },
         ],
         time: 1.0,
     };
 
     let boiler_mk2_carbon_to_power = Process {
+        name: String::from("boiler_mk2_carbon_to_power"),
         // 60% efficiency.
         ingredients: vec![
             Ingredient {
                 material: Material::Joule,
-                quantity: 0.6*boiler_mk2_burning_carbon.energy_consumption,
+                quantity: 0.6 * boiler_mk2_burning_carbon.energy_consumption,
             },
         ],
         time: 1.0,
     };
 
     let burn_oxygen = Process {
+        name: String::from("burn_oxygen"),
         ingredients: vec![
             Ingredient {
                 material: Material::Oxygen,
@@ -383,6 +405,7 @@ fn early_energy() {
     };
 
     let burn_hydrogen = Process {
+        name: String::from("burn_hydrogen"),
         ingredients: vec![
             Ingredient {
                 material: Material::Hydrogen,
@@ -472,20 +495,30 @@ fn early_energy() {
             process: &coke_to_carbon,
         },
         Group {
-            quantity: 28.0 / (3.6 /* J/s/boiler */ / 6.0 /* J/carbon */) * boiler_mk1_carbon_to_power.time / boiler_mk1_burning_carbon.speed,
+            quantity: 28.0 / (3.6 /* J/s/boiler */ / 6.0 /* J/carbon */) *
+                boiler_mk1_carbon_to_power.time /
+                boiler_mk1_burning_carbon.speed,
             processor: &boiler_mk1_burning_carbon,
             process: &boiler_mk1_carbon_to_power,
         },
     ];
 
     for group in &groups {
-        println!("{} x {} performing {:#?}", group.quantity, group.processor.name, group.process);
+        println!(
+            "{} x {} performing {:#?}",
+            group.quantity,
+            group.processor.name,
+            group.process
+        );
     }
 
     // println!("{:#?}", &groups);
 
     let balance = accumulate_groups(&groups);
-    println!("Material (production, consumption) per second: {:#?}", balance);
+    println!(
+        "Material (production, consumption) per second: {:#?}",
+        balance
+    );
 
 }
 
@@ -506,7 +539,8 @@ fn accumulate_groups(groups: &Vec<Group>) -> std::collections::BTreeMap<Material
 
         for ingredient in process.ingredients.iter() {
             let accumulator = map.entry(ingredient.material).or_insert((0.0, 0.0));
-            let quantity_per_second = (ingredient.quantity / process.time) * (quantity * processor.speed);
+            let quantity_per_second = (ingredient.quantity / process.time) *
+                (quantity * processor.speed);
             if quantity_per_second >= 0.0 {
                 (*accumulator).0 += quantity_per_second;
             } else {
@@ -516,8 +550,7 @@ fn accumulate_groups(groups: &Vec<Group>) -> std::collections::BTreeMap<Material
 
         assert!(processor.energy_source.joules() > 0.0);
 
-        let quantity_per_second = quantity *
-            -(processor.energy_consumption + processor.drain) /
+        let quantity_per_second = quantity * -(processor.energy_consumption + processor.drain) /
             processor.energy_source.joules();
 
         let accumulator = map.entry(processor.energy_source).or_insert((0.0, 0.0));
@@ -531,6 +564,8 @@ fn accumulate_groups(groups: &Vec<Group>) -> std::collections::BTreeMap<Material
 
     map
 }
+
+// use std::io::prelude::*;
 
 fn nodules() {
     // Processors.
@@ -552,6 +587,7 @@ fn nodules() {
 
     // Processes.
     let pump_viscous_mud_water = Process {
+        name: String::from("pump_viscous_mud_water"),
         ingredients: vec![
             Ingredient {
                 material: Material::ViscousMudWater,
@@ -562,6 +598,7 @@ fn nodules() {
     };
 
     let wash_viscous_mud_water = Process {
+        name: String::from("wash_viscous_mud_water"),
         ingredients: vec![
             Ingredient {
                 material: Material::ViscousMudWater,
@@ -584,6 +621,7 @@ fn nodules() {
     };
 
     let wash_heavy_mud_water = Process {
+        name: String::from("wash_heavy_mud_water"),
         ingredients: vec![
             Ingredient {
                 material: Material::HeavyMudWater,
@@ -606,6 +644,7 @@ fn nodules() {
     };
 
     let heavy_mud_water_to_nodule = Process {
+        name: String::from("heavy_mud_water_to_nodule"),
         ingredients: vec![
             Ingredient {
                 material: Material::HeavyMudWater,
@@ -623,31 +662,127 @@ fn nodules() {
         time: 5.0,
     };
 
+    struct Group<'a> {
+        quantity: Option<f64>,
+        processor: &'a Processor,
+        process: &'a Process,
+    };
+
     // Setup.
     let groups = vec![
         Group {
-            quantity: 1.0,
+            quantity: Some(1.0),
             processor: &seafloor_pump,
             process: &pump_viscous_mud_water,
         },
         Group {
-            quantity: 300.0/(100.0/wash_viscous_mud_water.time*washing_plant_mk1.speed),
+            quantity: None,
             processor: &washing_plant_mk1,
             process: &wash_viscous_mud_water,
         },
         Group {
-            quantity: 300.0/(40.0/heavy_mud_water_to_nodule.time*washing_plant_mk1.speed),
+            quantity: None,
             processor: &washing_plant_mk1,
             process: &heavy_mud_water_to_nodule,
         },
     ];
 
+    let mut material_to_row = std::collections::BTreeMap::<Material, usize>::new();
+
     for group in &groups {
-        println!("{} x {} performing {:#?}", group.quantity, group.processor.name, group.process);
+        for ingredient in &group.process.ingredients {
+            material_to_row.entry(ingredient.material).or_insert(0);
+        }
+        material_to_row
+            .entry(group.processor.energy_source)
+            .or_insert(0);
     }
 
-    // println!("{:#?}", &groups);
+    for (index, (material, row)) in material_to_row.iter_mut().enumerate() {
+        *row = index
+    }
 
-    let balance = accumulate_groups(&groups);
-    println!("Material (production, consumption) per second: {:#?}", balance);
+    let fixed_processes: Vec<(usize, f64)> = groups.iter().enumerate().filter_map(|(i, g)| g.quantity.map(|q| (i, q))).collect();
+
+    let fixed_materials = vec![
+        (Material::HeavyMudWater, 0.0),
+        (Material::ViscousMudWater, 0.0),
+    ];
+
+    // Recipe matrix.
+    #[allow(non_snake_case)]
+    let mut R: Matrix<f64> = Matrix::zeros(material_to_row.len(), groups.len());
+
+    for (col, group) in groups.iter().enumerate() {
+        for ingredient in &group.process.ingredients {
+            let row = *material_to_row.get(&ingredient.material).unwrap();
+            R[[row, col]] = group.processor.speed * ingredient.quantity / group.process.time;
+        }
+        let row = *material_to_row
+            .get(&group.processor.energy_source)
+            .unwrap();
+        R[[row, col]] = group.processor.energy_consumption + group.processor.drain;
+    }
+
+    #[allow(non_snake_case)]
+    let I: Matrix<f64> = -Matrix::identity(material_to_row.len());
+
+    #[allow(non_snake_case)]
+    let Rv: Vector<f64> = Vector::zeros(material_to_row.len());
+
+    // Process constraint matrices.
+
+    #[allow(non_snake_case)]
+    let mut P: Matrix<f64> = Matrix::zeros(fixed_processes.len(), groups.len());
+
+    #[allow(non_snake_case)]
+    let P0: Matrix<f64> = Matrix::zeros(fixed_processes.len(), material_to_row.len());
+
+    #[allow(non_snake_case)]
+    let mut Pv: Vector<f64> = Vector::zeros(fixed_processes.len());
+
+    for (row, &(col, q)) in fixed_processes.iter().enumerate() {
+        P[[row, col]] = 1.0;
+        Pv[row] = q;
+    }
+
+    // Material constraint matrices.
+
+    #[allow(non_snake_case)]
+    let M0: Matrix<f64> = Matrix::zeros(fixed_materials.len(), groups.len());
+
+    #[allow(non_snake_case)]
+    let mut M: Matrix<f64> = Matrix::zeros(fixed_materials.len(), material_to_row.len());
+
+    #[allow(non_snake_case)]
+    let mut Mv: Vector<f64> = Vector::zeros(fixed_materials.len());
+
+    for (row, &(mat, q)) in fixed_materials.iter().enumerate() {
+        let col = material_to_row[&mat];
+        M[[row, col]] = 1.0;
+        Mv[row] = q;
+    }
+
+    let a: Matrix<f64> =
+        (&R.hcat(&I))
+        .vcat(&P.hcat(&P0))
+        .vcat(&M0.hcat(&M))
+        ;
+
+    use std::iter::FromIterator;
+
+    let b: Vector<f64> = Vector::from_iter(Rv.into_iter().chain(Pv.into_iter()).chain(Mv.into_iter()));
+
+    let x = a.solve(b).unwrap();
+
+    println!("Setup");
+    for (i, group) in groups.iter().enumerate() {
+        println!("{:.2} x {} performing {}", x[i], group.processor.name, group.process.name);
+    }
+
+    println!();
+    println!("Balance");
+    for (i, (material, _)) in material_to_row.iter().enumerate() {
+        println!("{:.2} {:?}/s", x[groups.len() + i], material);
+    }
 }
