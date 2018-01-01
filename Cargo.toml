@@ -1,5 +1,5 @@
 [package]
-name = "factorio"
+name = "factorio-calculations"
 version = "0.1.0"
 authors = ["Mick van Gelderen <mickvangelderen@gmail.com>"]
 
