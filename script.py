@@ -1,3 +1,6 @@
+# This was an early attempt in python but didn't want to spend time learning
+# python anymore while investigating the problem at the same time.
+
 from sympy import *
 
 # resources
