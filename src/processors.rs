@@ -64,8 +64,8 @@ pub static ore_crusher_mk1: Processor = Processor {
     drain: 3_300.0,
 };
 
-pub static stone_oven_burning_carbon: Processor = Processor {
-    name: "stone_oven_burning_carbon",
+pub static stone_furnace_burning_carbon: Processor = Processor {
+    name: "stone_furnace_burning_carbon",
     speed: 1.0,
     energy_consumption: 180_000.0,
     energy_source: Material::Carbon,

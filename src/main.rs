@@ -7,8 +7,10 @@ use rulinalg::matrix::*;
 use rulinalg::vector::*;
 
 mod processors;
+mod processes;
 
 use processors::*;
+use processes::*;
 
 #[derive(Debug, Eq, PartialEq, Hash, Ord, PartialOrd, Copy, Clone)]
 pub enum Material {
@@ -61,8 +63,8 @@ pub struct Ingredient {
 
 #[derive(Debug)]
 pub struct Process {
-    name: String,
-    ingredients: Vec<Ingredient>,
+    name: &'static str,
+    ingredients: &'static [Ingredient],
     time: f64,
 }
 
@@ -76,374 +78,117 @@ pub struct Processor {
 }
 
 fn main() {
-    // early_energy();
+    early_energy();
     nodules();
 }
 
 fn early_energy() {
-    // Processes.
-    let water_pumping = Process {
-        name: String::from("water_pumping"),
-        ingredients: vec![
-            Ingredient {
-                material: Material::Water,
-                quantity: 1.0,
-            },
-        ],
-        time: 1.0,
-    };
-
-    let dirt_water_electrolysis = Process {
-        name: String::from("dirt_water_electrolysis"),
-        ingredients: vec![
-            Ingredient {
-                material: Material::Water,
-                quantity: -100.0,
-            },
-            Ingredient {
-                material: Material::Oxygen,
-                quantity: 30.0,
-            },
-            Ingredient {
-                material: Material::Hydrogen,
-                quantity: 40.0,
-            },
-            Ingredient {
-                material: Material::Slag,
-                quantity: 1.0,
-            },
-        ],
-        time: 1.0,
-    };
-
-    let stone_crushing = Process {
-        name: String::from("stone_crushing"),
-        ingredients: vec![
-            Ingredient {
-                material: Material::Slag,
-                quantity: -1.0,
-            },
-            Ingredient {
-                material: Material::CrushedStone,
-                quantity: 2.0,
-            },
-        ],
-        time: 1.0,
-    };
-
-    let water_mineralization = Process {
-        name: String::from("water_mineralization"),
-        ingredients: vec![
-            Ingredient {
-                material: Material::CrushedStone,
-                quantity: -10.0,
-            },
-            Ingredient {
-                material: Material::Water,
-                quantity: -100.0,
-            },
-            Ingredient {
-                material: Material::MineralizedWater,
-                quantity: 100.0,
-            },
-        ],
-        time: 1.0,
-    };
-
-    let green_algae_growing = Process {
-        name: String::from("green_algae_growing"),
-        ingredients: vec![
-            Ingredient {
-                material: Material::MineralizedWater,
-                quantity: -100.0,
-            },
-            Ingredient {
-                material: Material::CarbonDioxide,
-                quantity: -100.0,
-            },
-            Ingredient {
-                material: Material::GreenAlgae,
-                quantity: 40.0,
-            },
-        ],
-        time: 20.0,
-    };
-
-    let green_algae_to_fiber = Process {
-        name: String::from("green_algae_to_fiber"),
-        ingredients: vec![
-            Ingredient {
-                material: Material::GreenAlgae,
-                quantity: -10.0,
-            },
-            Ingredient {
-                material: Material::Fiber,
-                quantity: 5.0,
-            },
-        ],
-        time: 3.0,
-    };
-
-    let fiber_to_wood_pellet = Process {
-        name: String::from("fiber_to_wood_pellet"),
-        ingredients: vec![
-            Ingredient {
-                material: Material::Fiber,
-                quantity: -12.0,
-            },
-            Ingredient {
-                material: Material::WoodPellet,
-                quantity: 2.0,
-            },
-        ],
-        time: 4.0,
-    };
-
-    let wood_pellet_to_wood_brick = Process {
-        name: String::from("wood_pellet_to_wood_brick"),
-        ingredients: vec![
-            Ingredient {
-                material: Material::WoodPellet,
-                quantity: -8.0,
-            },
-            Ingredient {
-                material: Material::WoodBrick,
-                quantity: 4.0,
-            },
-        ],
-        time: 2.0,
-    };
-
-    let wood_brick_to_coal = Process {
-        name: String::from("wood_brick_to_coal"),
-        ingredients: vec![
-            Ingredient {
-                material: Material::WoodBrick,
-                quantity: -1.0,
-            },
-            Ingredient {
-                material: Material::Coal,
-                quantity: 3.0,
-            },
-        ],
-        time: 3.5,
-    };
-
-    let coal_to_carbon_dioxide = Process {
-        name: String::from("coal_to_carbon_dioxide"),
-        ingredients: vec![
-            Ingredient {
-                material: Material::Coal,
-                quantity: -1.0,
-            },
-            Ingredient {
-                material: Material::CarbonDioxide,
-                quantity: 50.0,
-            },
-        ],
-        time: 2.0,
-    };
-
-    let coal_to_crushed_coal = Process {
-        name: String::from("coal_to_crushed_coal"),
-        ingredients: vec![
-            Ingredient {
-                material: Material::Coal,
-                quantity: -1.0,
-            },
-            Ingredient {
-                material: Material::CrushedCoal,
-                quantity: 2.0,
-            },
-        ],
-        time: 1.0,
-    };
-
-    let burn_crushed_coal_to_coke = Process {
-        name: String::from("burn_crushed_coal_to_coke"),
-        ingredients: vec![
-            Ingredient {
-                material: Material::CrushedCoal,
-                quantity: -1.0,
-            },
-            Ingredient {
-                material: Material::Coke,
-                quantity: 2.0,
-            },
-        ],
-        time: 1.0,
-    };
-
-    let coke_to_carbon = Process {
-        name: String::from("coke_to_carbon"),
-        ingredients: vec![
-            Ingredient {
-                material: Material::Coke,
-                quantity: -2.0,
-            },
-            Ingredient {
-                material: Material::CarbonDioxide,
-                quantity: -35.0,
-            },
-            Ingredient {
-                material: Material::Carbon,
-                quantity: 3.0,
-            },
-        ],
-        time: 2.0,
-    };
-
-    let boiler_mk1_carbon_to_power = Process {
-        name: String::from("boiler_mk1_carbon_to_power"),
-        // 50% efficiency.
-        ingredients: vec![
-            Ingredient {
-                material: Material::Joule,
-                quantity: 0.5 * boiler_mk1_burning_carbon.energy_consumption,
-            },
-        ],
-        time: 1.0,
-    };
-
-    let boiler_mk2_carbon_to_power = Process {
-        name: String::from("boiler_mk2_carbon_to_power"),
-        // 60% efficiency.
-        ingredients: vec![
-            Ingredient {
-                material: Material::Joule,
-                quantity: 0.6 * boiler_mk2_burning_carbon.energy_consumption,
-            },
-        ],
-        time: 1.0,
-    };
-
-    let burn_oxygen = Process {
-        name: String::from("burn_oxygen"),
-        ingredients: vec![
-            Ingredient {
-                material: Material::Oxygen,
-                quantity: -100.0,
-            },
-        ],
-        time: 1.0,
-    };
-
-    let burn_hydrogen = Process {
-        name: String::from("burn_hydrogen"),
-        ingredients: vec![
-            Ingredient {
-                material: Material::Hydrogen,
-                quantity: -100.0,
-            },
-        ],
-        time: 1.0,
-    };
 
     // Do things.
     let groups = vec![
-        FixedGroup {
-            quantity: 3.0,
+        Group {
+            quantity: None,
             processor: &offshore_pump,
             process: &water_pumping,
         },
-        FixedGroup {
-            quantity: 675.0 / (flare_stack.speed * 100.0),
+        Group {
+            quantity: None,
             processor: &flare_stack,
             process: &burn_oxygen,
         },
-        FixedGroup {
-            quantity: 900.0 / (flare_stack.speed * 100.0),
+        Group {
+            quantity: None,
             processor: &flare_stack,
             process: &burn_hydrogen,
         },
-        FixedGroup {
-            quantity: 22.5,
+        Group {
+            quantity: None,
             processor: &electrolyser_mk1,
             process: &dirt_water_electrolysis,
         },
-        FixedGroup {
-            quantity: 15.0,
+        Group {
+            quantity: None,
             processor: &ore_crusher_mk1,
             process: &stone_crushing,
         },
-        FixedGroup {
-            quantity: 3.0,
+        Group {
+            quantity: None,
             processor: &liquifier_mk1,
             process: &water_mineralization,
         },
-        FixedGroup {
-            quantity: 90.0,
+        Group {
+            quantity: Some(10.0),
             processor: &algae_farm_mk1,
             process: &green_algae_growing,
         },
-        FixedGroup {
-            quantity: 180.0 / (liquifier_mk1.speed / green_algae_to_fiber.time * 10.0),
+        Group {
+            quantity: None,
             processor: &liquifier_mk1,
             process: &green_algae_to_fiber,
         },
-        FixedGroup {
-            quantity: 90.0 / (assembly_machine_mk1.speed / fiber_to_wood_pellet.time * 12.0),
+        Group {
+            quantity: None,
             processor: &assembly_machine_mk1,
             process: &fiber_to_wood_pellet,
         },
-        FixedGroup {
-            quantity: 15.0 / (assembly_machine_mk1.speed / wood_pellet_to_wood_brick.time * 8.0),
+        Group {
+            quantity: None,
             processor: &assembly_machine_mk1,
             process: &wood_pellet_to_wood_brick,
         },
-        FixedGroup {
-            quantity: 7.5 / (stone_oven_burning_carbon.speed / wood_brick_to_coal.time * 1.0),
-            processor: &stone_oven_burning_carbon,
+        Group {
+            quantity: None,
+            processor: &stone_furnace_burning_carbon,
             process: &wood_brick_to_coal,
         },
-        FixedGroup {
-            // Desired 450 for algae farms.
-            quantity: (450.0 + 350.0) / (liquifier_mk1.speed / coal_to_carbon_dioxide.time * 50.0),
+        Group {
+            quantity: None,
             processor: &liquifier_mk1,
             process: &coal_to_carbon_dioxide,
         },
-        FixedGroup {
-            // Say we use only 5 coal.
-            quantity: 5.0 / 1.0 * coal_to_crushed_coal.time / ore_crusher_mk1.speed,
+        Group {
+            quantity: None,
             processor: &ore_crusher_mk1,
             process: &coal_to_crushed_coal,
         },
-        FixedGroup {
-            quantity: 10.0 / 1.0 * burn_crushed_coal_to_coke.time / stone_oven_burning_carbon.speed,
-            processor: &stone_oven_burning_carbon,
+        Group {
+            quantity: None,
+            processor: &stone_furnace_burning_carbon,
             process: &burn_crushed_coal_to_coke,
         },
-        FixedGroup {
-            quantity: 10.0 / 1.0 * coke_to_carbon.time / liquifier_mk1.speed,
+        Group {
+            quantity: None,
             processor: &liquifier_mk1,
             process: &coke_to_carbon,
         },
-        FixedGroup {
-            quantity: 28.0 / (3.6 /* J/s/boiler */ / 6.0 /* J/carbon */) *
-                boiler_mk1_carbon_to_power.time /
-                boiler_mk1_burning_carbon.speed,
+        Group {
+            quantity: None,
             processor: &boiler_mk1_burning_carbon,
             process: &boiler_mk1_carbon_to_power,
         },
     ];
 
-    for group in &groups {
-        println!(
-            "{} x {} performing {:#?}",
-            group.quantity,
-            group.processor.name,
-            group.process
-        );
-    }
-
-    // println!("{:#?}", &groups);
-
-    let balance = accumulate_groups(&groups);
-    println!(
-        "Material (production, consumption) per second: {:#?}",
-        balance
+    solve_and_print(
+        groups,
+        vec![
+            (Material::Carbon, 0.0),
+            (Material::CarbonDioxide, 0.0),
+            (Material::Coal, 0.0),
+            (Material::Coke, 0.0),
+            (Material::CrushedCoal, 0.0),
+            (Material::CrushedStone, 0.0),
+            (Material::Fiber, 0.0),
+            (Material::GreenAlgae, 0.0),
+            (Material::Hydrogen, 0.0),
+            // (Material::Joule, 0.0),
+            (Material::MineralizedWater, 0.0),
+            (Material::Oxygen, 0.0),
+            (Material::Slag, 0.0),
+            (Material::Water, 0.0),
+            (Material::WoodBrick, 0.0),
+            (Material::WoodPellet, 0.0),
+        ],
     );
-
 }
 
 #[derive(Debug)]
@@ -490,86 +235,15 @@ fn accumulate_groups(groups: &Vec<FixedGroup>) -> std::collections::BTreeMap<Mat
 }
 
 fn nodules() {
-    // Processes.
-    let pump_viscous_mud_water = Process {
-        name: String::from("pump_viscous_mud_water"),
-        ingredients: vec![
-            Ingredient {
-                material: Material::ViscousMudWater,
-                quantity: 1.0,
-            },
-        ],
-        time: 1.0,
-    };
-
-    let wash_viscous_mud_water = Process {
-        name: String::from("wash_viscous_mud_water"),
-        ingredients: vec![
-            Ingredient {
-                material: Material::ViscousMudWater,
-                quantity: -100.0,
-            },
-            Ingredient {
-                material: Material::Water,
-                quantity: -50.0,
-            },
-            Ingredient {
-                material: Material::HeavyMudWater,
-                quantity: 100.0,
-            },
-            Ingredient {
-                material: Material::Mud,
-                quantity: 1.0,
-            },
-        ],
-        time: 5.0,
-    };
-
-    let wash_heavy_mud_water = Process {
-        name: String::from("wash_heavy_mud_water"),
-        ingredients: vec![
-            Ingredient {
-                material: Material::HeavyMudWater,
-                quantity: -100.0,
-            },
-            Ingredient {
-                material: Material::Water,
-                quantity: -50.0,
-            },
-            Ingredient {
-                material: Material::ConcentratedMudWater,
-                quantity: 100.0,
-            },
-            Ingredient {
-                material: Material::Mud,
-                quantity: 1.0,
-            },
-        ],
-        time: 5.0,
-    };
-
-    let heavy_mud_water_to_nodule = Process {
-        name: String::from("heavy_mud_water_to_nodule"),
-        ingredients: vec![
-            Ingredient {
-                material: Material::HeavyMudWater,
-                quantity: -40.0,
-            },
-            Ingredient {
-                material: Material::Water,
-                quantity: -25.0,
-            },
-            Ingredient {
-                material: Material::Nodule,
-                quantity: 1.0,
-            },
-        ],
-        time: 5.0,
-    };
 
 
     // Setup.
     let groups = vec![
+        Group {
+            quantity: None,
+            processor: &offshore_pump,
+            process: &water_pumping,
+        },
         Group {
             quantity: Some(1.0),
             processor: &seafloor_pump,
@@ -588,6 +262,7 @@ fn nodules() {
     ];
 
     let fixed_materials = vec![
+        (Material::Water, 0.0),
         (Material::HeavyMudWater, 0.0),
         (Material::ViscousMudWater, 0.0),
     ];
@@ -602,13 +277,16 @@ struct Group<'a> {
 }
 
 fn solve_and_print(groups: Vec<Group>, fixed_materials: Vec<(Material, f64)>) {
-    let fixed_processes: Vec<(usize, f64)> = groups.iter().enumerate().filter_map(|(i, g)| g.quantity.map(|q| (i, q))).collect();
-
+    let fixed_processes: Vec<(usize, f64)> = groups
+        .iter()
+        .enumerate()
+        .filter_map(|(i, g)| g.quantity.map(|q| (i, q)))
+        .collect();
 
     let mut material_to_row = std::collections::BTreeMap::<Material, usize>::new();
 
     for group in &groups {
-        for ingredient in &group.process.ingredients {
+        for ingredient in group.process.ingredients {
             material_to_row.entry(ingredient.material).or_insert(0);
         }
         material_to_row
@@ -625,14 +303,12 @@ fn solve_and_print(groups: Vec<Group>, fixed_materials: Vec<(Material, f64)>) {
     let mut R: Matrix<f64> = Matrix::zeros(material_to_row.len(), groups.len());
 
     for (col, group) in groups.iter().enumerate() {
-        for ingredient in &group.process.ingredients {
+        for ingredient in group.process.ingredients {
             let row = *material_to_row.get(&ingredient.material).unwrap();
             R[[row, col]] = group.processor.speed * ingredient.quantity / group.process.time;
         }
-        let row = *material_to_row
-            .get(&group.processor.energy_source)
-            .unwrap();
-        R[[row, col]] = group.processor.energy_consumption + group.processor.drain;
+        let row = *material_to_row.get(&group.processor.energy_source).unwrap();
+        R[[row, col]] = -(group.processor.energy_consumption + group.processor.drain)/group.processor.energy_source.joules();
     }
 
     #[allow(non_snake_case)]
@@ -669,31 +345,53 @@ fn solve_and_print(groups: Vec<Group>, fixed_materials: Vec<(Material, f64)>) {
     let mut Mv: Vector<f64> = Vector::zeros(fixed_materials.len());
 
     for (row, &(mat, q)) in fixed_materials.iter().enumerate() {
-        let col = material_to_row[&mat];
+        let col = *material_to_row.get(&mat).expect(&format!(
+            "{:?} does not participate in any of the recipes or as fuel",
+            mat
+        ));
         M[[row, col]] = 1.0;
         Mv[row] = q;
     }
 
-    let a: Matrix<f64> =
-        (&R.hcat(&I))
-        .vcat(&P.hcat(&P0))
-        .vcat(&M0.hcat(&M))
-        ;
+    let a: Matrix<f64> = (&R.hcat(&I)).vcat(&P.hcat(&P0)).vcat(&M0.hcat(&M));
 
     use std::iter::FromIterator;
 
-    let b: Vector<f64> = Vector::from_iter(Rv.into_iter().chain(Pv.into_iter()).chain(Mv.into_iter()));
+    let b: Vector<f64> =
+        Vector::from_iter(Rv.into_iter().chain(Pv.into_iter()).chain(Mv.into_iter()));
 
     let x = a.solve(b).unwrap();
 
     println!("Setup");
     for (i, group) in groups.iter().enumerate() {
-        println!("{:.2} x {} ({})", x[i], group.process.name, group.processor.name);
+        println!(
+            "{:>12.2} x {} ({})",
+            x[i],
+            group.process.name,
+            group.processor.name
+        );
     }
 
     println!();
     println!("Balance");
     for (i, (material, _)) in material_to_row.iter().enumerate() {
-        println!("{:.2} {:?}/s", x[groups.len() + i], material);
+        println!("{:>12.2} {:?}/s", x[groups.len() + i], material);
     }
+
+    let groups: Vec<FixedGroup> = groups.iter().enumerate().map(|(i, group)| {
+        FixedGroup {
+            quantity: x[i],
+            process: group.process,
+            processor: group.processor,
+        }
+    }).collect();
+
+    println!();
+    println!("  Production  Consumption");
+    let prod_cons = accumulate_groups(&groups);
+    for (mat, (prod, cons)) in prod_cons.into_iter() {
+        println!("{:>12.2} {:>12.2} {:?}/m", prod*60.0, cons*60.0, mat);
+    }
+
+    println!();
 }
