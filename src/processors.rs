@@ -8,12 +8,36 @@ pub static boiler_mk1_burning_carbon: Processor = Processor {
     drain: 0.0,
 };
 
+pub static boiler_mk1_burning_wood_pellet: Processor = Processor {
+    name: "boiler_mk1_burning_wood_pellet",
+    speed: 1.0,
+    energy_consumption: 3_600_000.0,
+    energy_source: Material::WoodPellet,
+    drain: 0.0,
+};
+
 pub static boiler_mk2_burning_carbon: Processor = Processor {
     name: "boiler_mk2_burning_carbon",
     speed: 1.0,
     energy_consumption: 3_600_000.0,
     energy_source: Material::Carbon,
     drain: 0.0,
+};
+
+pub static hydro_plant_mk1: Processor = Processor {
+    name: "hydro_plant_mk1",
+    speed: 1.0,
+    energy_consumption: 200_000.0,
+    energy_source: Material::Joule,
+    drain: 6_600.0,
+};
+
+pub static clarifier: Processor = Processor {
+    name: "clarifier",
+    speed: 2.0,
+    energy_consumption: 30_000.0,
+    energy_source: Material::Joule,
+    drain: 1_000.0,
 };
 
 pub static assembly_machine_mk1: Processor = Processor {
