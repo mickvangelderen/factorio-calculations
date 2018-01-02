@@ -117,6 +117,21 @@ pub static fiber_to_wood_pellet: Process = Process {
     time: 4.0,
 };
 
+pub static wood_pellet_to_carbon_dioxide: Process = Process {
+    name: "wood_pellet_to_coal",
+    ingredients: &[
+        Ingredient {
+            material: Material::WoodPellet,
+            quantity: -1.0,
+        },
+        Ingredient {
+            material: Material::CarbonDioxide,
+            quantity: 70.0,
+        },
+    ],
+    time: 2.0
+};
+
 pub static wood_pellet_to_wood_brick: Process = Process {
     name: "wood_pellet_to_wood_brick",
     ingredients: &[
@@ -211,8 +226,84 @@ pub static coke_to_carbon: Process = Process {
     time: 2.0,
 };
 
-pub static boiler_mk1_carbon_to_power: Process = Process {
-    name: "boiler_mk1_carbon_to_power",
+pub static water_purification: Process = Process {
+    name: "water_purification",
+    ingredients: &[
+        Ingredient {
+            material: Material::Water,
+            quantity: -150.0,
+        },
+        Ingredient {
+            material: Material::SalineWater,
+            quantity: 20.0,
+        },
+        Ingredient {
+            material: Material::PurifiedWater,
+            quantity: 100.0,
+        },
+    ],
+    time: 1.0,
+};
+
+pub static clean_coal_to_coke_and_sulfuric_waste_water: Process = Process {
+    name: "clean_coal_to_coke_and_sulfuric_waste_water",
+    ingredients: &[
+        Ingredient {
+            material: Material::CrushedCoal,
+            quantity: -2.0,
+        },
+        Ingredient {
+            material: Material::PurifiedWater,
+            quantity: -50.0,
+        },
+        Ingredient {
+            material: Material::Coke,
+            quantity: 2.0,
+        },
+        Ingredient {
+            material: Material::SulfuricWasteWater,
+            quantity: 50.0,
+        },
+    ],
+    time: 4.0,
+};
+
+pub static sulfuric_waste_water_purification: Process = Process {
+    name: "sulfuric_waste_water_purification",
+    ingredients: &[
+        Ingredient {
+            material: Material::SulfuricWasteWater,
+            quantity: -100.0,
+        },
+        Ingredient {
+            material: Material::Sulfur,
+            quantity: 1.0,
+        },
+        Ingredient {
+            material: Material::MineralizedWater,
+            quantity: 20.0,
+        },
+        Ingredient {
+            material: Material::PurifiedWater,
+            quantity: 70.0,
+        },
+    ],
+    time: 1.0,
+};
+
+pub static void_saline_water: Process = Process {
+    name: "void_saline_water",
+    ingredients: &[
+        Ingredient {
+            material: Material::SalineWater,
+            quantity: -400.0,
+        },
+    ],
+    time: 5.0,
+};
+
+pub static boiler_mk1_power: Process = Process {
+    name: "boiler_mk1_power",
     // 50% efficiency.
     ingredients: &[
         Ingredient {
@@ -223,8 +314,8 @@ pub static boiler_mk1_carbon_to_power: Process = Process {
     time: 1.0,
 };
 
-pub static boiler_mk2_carbon_to_power: Process = Process {
-    name: "boiler_mk2_carbon_to_power",
+pub static boiler_mk2_power: Process = Process {
+    name: "boiler_mk2_power",
     // 60% efficiency.
     ingredients: &[
         Ingredient {
@@ -256,6 +347,7 @@ pub static burn_hydrogen: Process = Process {
     ],
     time: 1.0,
 };
+
 pub static pump_viscous_mud_water: Process = Process {
     name: "pump_viscous_mud_water",
     ingredients: &[
