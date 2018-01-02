@@ -82,13 +82,198 @@ pub struct Processor {
 }
 
 fn main() {
-    early_energy();
-    nodules();
+    easy_early_energy();
+    // early_energy();
+    // advanced_early_energy();
+    // nodules();
+}
+
+fn easy_early_energy() {
+    // Do things.
+    let groups = vec![
+        Group {
+            quantity: None,
+            processor: &offshore_pump,
+            process: &water_pumping,
+        },
+        Group {
+            quantity: None,
+            processor: &flare_stack,
+            process: &burn_oxygen,
+        },
+        Group {
+            quantity: None,
+            processor: &flare_stack,
+            process: &burn_hydrogen,
+        },
+        Group {
+            quantity: Some(1.0),
+            processor: &electrolyser_mk1,
+            process: &dirt_water_electrolysis,
+        },
+        Group {
+            quantity: None,
+            processor: &ore_crusher_mk1,
+            process: &stone_crushing,
+        },
+        Group {
+            quantity: None,
+            processor: &liquifier_mk1,
+            process: &water_mineralization,
+        },
+        Group {
+            quantity: None,
+            processor: &algae_farm_mk1,
+            process: &green_algae_growing,
+        },
+        Group {
+            quantity: None,
+            processor: &liquifier_mk1,
+            process: &green_algae_to_fiber,
+        },
+        Group {
+            quantity: None,
+            processor: &assembly_machine_mk1,
+            process: &fiber_to_wood_pellet,
+        },
+        Group {
+            quantity: None,
+            processor: &liquifier_mk1,
+            process: &wood_pellet_to_carbon_dioxide,
+        },
+        Group {
+            quantity: None,
+            processor: &boiler_mk1_burning_wood_pellet,
+            process: &boiler_mk1_power,
+        },
+    ];
+
+    solve_and_print(
+        groups,
+        vec![
+            (Material::CarbonDioxide, 0.0),
+            (Material::CrushedStone, 0.0),
+            (Material::Fiber, 0.0),
+            (Material::GreenAlgae, 0.0),
+            (Material::Hydrogen, 0.0),
+            // (Material::Joule, 0.0),
+            (Material::MineralizedWater, 0.0),
+            (Material::Oxygen, 0.0),
+            (Material::Slag, 0.0),
+            (Material::Water, 0.0),
+            (Material::WoodPellet, 0.0),
+        ],
+    );
 }
 
 fn early_energy() {
+    let groups = vec![
+        Group {
+            quantity: None,
+            processor: &offshore_pump,
+            process: &water_pumping,
+        },
+        Group {
+            quantity: None,
+            processor: &flare_stack,
+            process: &burn_oxygen,
+        },
+        Group {
+            quantity: None,
+            processor: &flare_stack,
+            process: &burn_hydrogen,
+        },
+        Group {
+            quantity: None,
+            processor: &electrolyser_mk1,
+            process: &dirt_water_electrolysis,
+        },
+        Group {
+            quantity: None,
+            processor: &ore_crusher_mk1,
+            process: &stone_crushing,
+        },
+        Group {
+            quantity: None,
+            processor: &liquifier_mk1,
+            process: &water_mineralization,
+        },
+        Group {
+            quantity: None,
+            processor: &algae_farm_mk1,
+            process: &green_algae_growing,
+        },
+        Group {
+            quantity: None,
+            processor: &liquifier_mk1,
+            process: &green_algae_to_fiber,
+        },
+        Group {
+            quantity: None,
+            processor: &assembly_machine_mk1,
+            process: &fiber_to_wood_pellet,
+        },
+        Group {
+            quantity: None,
+            processor: &assembly_machine_mk1,
+            process: &wood_pellet_to_wood_brick,
+        },
+        Group {
+            quantity: None,
+            processor: &stone_furnace_burning_carbon,
+            process: &wood_brick_to_coal,
+        },
+        Group {
+            quantity: None,
+            processor: &liquifier_mk1,
+            process: &coal_to_carbon_dioxide,
+        },
+        Group {
+            quantity: Some(1.0),
+            processor: &ore_crusher_mk1,
+            process: &coal_to_crushed_coal,
+        },
+        Group {
+            quantity: None,
+            processor: &stone_furnace_burning_carbon,
+            process: &burn_crushed_coal_to_coke,
+        },
+        Group {
+            quantity: None,
+            processor: &liquifier_mk1,
+            process: &coke_to_carbon,
+        },
+        Group {
+            quantity: None,
+            processor: &boiler_mk1_burning_carbon,
+            process: &boiler_mk1_power,
+        },
+    ];
 
-    // Do things.
+    solve_and_print(
+        groups,
+        vec![
+            (Material::Carbon, 0.0),
+            (Material::CarbonDioxide, 0.0),
+            (Material::Coal, 0.0),
+            (Material::Coke, 0.0),
+            (Material::CrushedCoal, 0.0),
+            (Material::CrushedStone, 0.0),
+            (Material::Fiber, 0.0),
+            (Material::GreenAlgae, 0.0),
+            (Material::Hydrogen, 0.0),
+            // (Material::Joule, 0.0),
+            (Material::MineralizedWater, 0.0),
+            (Material::Oxygen, 0.0),
+            (Material::Slag, 0.0),
+            (Material::Water, 0.0),
+            (Material::WoodBrick, 0.0),
+            (Material::WoodPellet, 0.0),
+        ],
+    );
+}
+
+fn advanced_early_energy() {
     let groups = vec![
         Group {
             quantity: None,
@@ -157,8 +342,23 @@ fn early_energy() {
         },
         Group {
             quantity: None,
-            processor: &stone_furnace_burning_carbon,
-            process: &burn_crushed_coal_to_coke,
+            processor: &hydro_plant_mk1,
+            process: &water_purification,
+        },
+        Group {
+            quantity: None,
+            processor: &clarifier,
+            process: &void_saline_water,
+        },
+        Group {
+            quantity: None,
+            processor: &liquifier_mk1,
+            process: &clean_coal_to_coke_and_sulfuric_waste_water,
+        },
+        Group {
+            quantity: None,
+            processor: &hydro_plant_mk1,
+            process: &sulfuric_waste_water_purification,
         },
         Group {
             quantity: None,
@@ -168,7 +368,7 @@ fn early_energy() {
         Group {
             quantity: None,
             processor: &boiler_mk1_burning_carbon,
-            process: &boiler_mk1_carbon_to_power,
+            process: &boiler_mk1_power,
         },
     ];
 
@@ -187,7 +387,11 @@ fn early_energy() {
             // (Material::Joule, 0.0),
             (Material::MineralizedWater, 0.0),
             (Material::Oxygen, 0.0),
+            (Material::PurifiedWater, 0.0),
+            (Material::SalineWater, 0.0),
             (Material::Slag, 0.0),
+            // (Material::Sulfur, 0.0),
+            (Material::SulfuricWasteWater, 0.0),
             (Material::Water, 0.0),
             (Material::WoodBrick, 0.0),
             (Material::WoodPellet, 0.0),
