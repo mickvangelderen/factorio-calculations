@@ -48,6 +48,23 @@ pub static clarifier: Processor = Processor {
     drain: 1_000.0,
 };
 
+pub static crystallizer_mk1: Processor = Processor {
+    name: "crystallizer_mk1",
+    speed: 1.5,
+    energy_consumption: 150_000.0,
+    energy_source: Material::Joule,
+    drain: 5_000.0,
+};
+
+pub static ore_sorting_facility_mk1: Processor = Processor {
+    name: "ore_sorting_facility_mk1",
+    speed: 0.75,
+    energy_consumption: 150_000.0,
+    energy_source: Material::Joule,
+    // TODO: lookup real drain
+    drain: 5_000.0,
+};
+
 pub static assembly_machine_mk1: Processor = Processor {
     name: "assembly_machine_mk1",
     speed: 0.5,

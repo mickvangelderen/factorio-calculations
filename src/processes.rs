@@ -34,6 +34,169 @@ pub static dirt_water_electrolysis: Process = Process {
     time: 2.0,
 };
 
+pub static mineralized_water_crystallization: Process = Process {
+    name: "mineralized_water_crystallization",
+    ingredients: &[
+        Ingredient {
+            material: Material::MineralizedWater,
+            quantity: -200.0,
+        },
+        Ingredient {
+            material: Material::SapphiriteOre,
+            quantity: 1.1,
+        },
+        Ingredient {
+            material: Material::SteratiteOre,
+            quantity: 0.7,
+        },
+    ],
+    time: 2.0,
+};
+
+pub static sapphirite_ore_crushing: Process = Process {
+    name: "sapphirite_ore_crushing",
+    ingredients: &[
+        Ingredient {
+            material: Material::SapphiriteOre,
+            quantity: -2.0,
+        },
+        Ingredient {
+            material: Material::CrushedStone,
+            quantity: 1.0,
+        },
+        Ingredient {
+            material: Material::CrushedSapphirite,
+            quantity: 2.0,
+        },
+    ],
+    time: 1.0,
+};
+
+pub static steratite_ore_crushing: Process = Process {
+    name: "steratite_ore_crushing",
+    ingredients: &[
+        Ingredient {
+            material: Material::SteratiteOre,
+            quantity: -2.0,
+        },
+        Ingredient {
+            material: Material::CrushedStone,
+            quantity: 1.0,
+        },
+        Ingredient {
+            material: Material::CrushedSteratite,
+            quantity: 2.0,
+        },
+    ],
+    time: 1.0,
+};
+
+pub static crushed_sapphirite_to_iron_plate: Process = Process {
+    name: "crushed_sapphirite_to_iron_plate",
+    ingredients: &[
+        Ingredient {
+            material: Material::CrushedSapphirite,
+            quantity: -3.0,
+        },
+        Ingredient {
+            material: Material::IronPlate,
+            quantity: 2.0,
+        },
+    ],
+    time: 7.0,
+};
+
+pub static crushed_steratite_to_copper_plate: Process = Process {
+    name: "crushed_steratite_to_copper_plate",
+    ingredients: &[
+        Ingredient {
+            material: Material::CrushedSteratite,
+            quantity: -3.0,
+        },
+        Ingredient {
+            material: Material::CopperPlate,
+            quantity: 2.0,
+        },
+    ],
+    time: 7.0,
+};
+
+pub static crushed_sapphirite_ore_sorting: Process = Process {
+    name: "crushed_sapphirite_ore_sorting",
+    ingredients: &[
+        Ingredient {
+            material: Material::CrushedSapphirite,
+            quantity: -4.0,
+        },
+        Ingredient {
+            material: Material::Slag,
+            quantity: 1.0,
+        },
+        Ingredient {
+            material: Material::IronOre,
+            quantity: 2.0,
+        },
+        Ingredient {
+            material: Material::CopperOre,
+            quantity: 1.0,
+        },
+    ],
+    time: 1.0,
+};
+
+pub static crushed_steratite_ore_sorting: Process = Process {
+    name: "crushed_steratite_ore_sorting",
+    ingredients: &[
+        Ingredient {
+            material: Material::CrushedSteratite,
+            quantity: -4.0,
+        },
+        Ingredient {
+            material: Material::Slag,
+            quantity: 1.0,
+        },
+        Ingredient {
+            material: Material::CopperOre,
+            quantity: 2.0,
+        },
+        Ingredient {
+            material: Material::IronOre,
+            quantity: 1.0,
+        },
+    ],
+    time: 1.0,
+};
+
+pub static iron_ore_to_iron_plate: Process = Process {
+    name: "iron_ore_to_iron_plate",
+    ingredients: &[
+        Ingredient {
+            material: Material::IronOre,
+            quantity: -4.0,
+        },
+        Ingredient {
+            material: Material::IronPlate,
+            quantity: 3.0,
+        },
+    ],
+    time: 10.5,
+};
+
+pub static copper_ore_to_copper_plate: Process = Process {
+    name: "copper_ore_to_copper_plate",
+    ingredients: &[
+        Ingredient {
+            material: Material::CopperOre,
+            quantity: -4.0,
+        },
+        Ingredient {
+            material: Material::CopperPlate,
+            quantity: 3.0,
+        },
+    ],
+    time: 10.5,
+};
+
 pub static stone_crushing: Process = Process {
     name: "stone_crushing",
     ingredients: &[

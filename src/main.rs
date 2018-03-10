@@ -16,16 +16,20 @@ use processes::*;
 pub enum Material {
     Carbon,
     CarbonDioxide,
-    // Coal,
     Charcoal,
     CharcoalPellet,
     ConcentratedMudWater,
-    // CrushedCoal,
+    CopperOre,
+    CopperPlate,
+    CrushedSapphirite,
+    CrushedSteratite,
     CrushedStone,
     Fiber,
     GreenAlgae,
     HeavyMudWater,
     Hydrogen,
+    IronOre,
+    IronPlate,
     Joule,
     MineralizedWater,
     Mud,
@@ -33,7 +37,9 @@ pub enum Material {
     Oxygen,
     PurifiedWater,
     SalineWater,
+    SapphiriteOre,
     Slag,
+    SteratiteOre,
     Sulfur,
     SulfuricWasteWater,
     ViscousMudWater,
@@ -48,7 +54,6 @@ impl Material {
 
         match *self {
             Carbon => 6_000_000.0,
-            // Coal => 8_000_000.0,
             Charcoal => 5_000_000.0,
             CharcoalPellet => 30_000_000.0,
             Fiber => 1_000_000.0,
@@ -82,8 +87,10 @@ pub struct Processor {
 }
 
 fn main() {
-    easy_early_energy();
-    early_energy();
+    // easy_early_energy();
+    // early_energy();
+    early_slag_to_iron_plate();
+    early_slag_to_iron_plate_sorted();
 }
 
 fn easy_early_energy() {
@@ -183,7 +190,7 @@ fn early_energy() {
             process: &burn_hydrogen,
         },
         Group {
-            quantity: Some(1.0),
+            quantity: Some(8.0),
             processor: &electrolyser_mk1,
             process: &dirt_water_electrolysis,
         },
@@ -253,6 +260,157 @@ fn early_energy() {
         ],
     );
 }
+
+fn early_slag_to_iron_plate() {
+    // Do things.
+    let groups = vec![
+        Group {
+            quantity: None,
+            processor: &offshore_pump,
+            process: &water_pumping,
+        },
+        Group {
+            quantity: None,
+            processor: &ore_crusher_mk1,
+            process: &stone_crushing,
+        },
+        Group {
+            quantity: None,
+            processor: &liquifier_mk1,
+            process: &water_mineralization,
+        },
+        Group {
+            quantity: None,
+            processor: &crystallizer_mk1,
+            process: &mineralized_water_crystallization,
+        },
+        Group {
+            quantity: None,
+            processor: &ore_crusher_mk1,
+            process: &sapphirite_ore_crushing,
+        },
+        Group {
+            quantity: None,
+            processor: &ore_crusher_mk1,
+            process: &steratite_ore_crushing,
+        },
+        Group {
+            quantity: None,
+            processor: &stone_furnace_burning_charcoal,
+            process: &crushed_sapphirite_to_iron_plate,
+        },
+        Group {
+            quantity: None,
+            processor: &stone_furnace_burning_charcoal,
+            process: &crushed_steratite_to_copper_plate,
+        },
+        Group {
+            quantity: None,
+            processor: &boiler_mk1_burning_charcoal,
+            process: &boiler_mk1_power,
+        },
+    ];
+
+    solve_and_print(
+        groups,
+        vec![
+            (Material::Charcoal, 0.0),
+            // (Material::CopperPlate, 0.0),
+            (Material::CrushedSapphirite, 0.0),
+            (Material::CrushedSteratite, 0.0),
+            (Material::CrushedStone, 0.0),
+            // (Material::IronPlate, 0.0),
+            // (Material::Joule, 0.0),
+            (Material::MineralizedWater, 0.0),
+            (Material::SapphiriteOre, 0.0),
+            (Material::Slag, -1.0), // Nonzero.
+            (Material::SteratiteOre, 0.0),
+            (Material::Water, 0.0),
+        ],
+    );
+}
+
+fn early_slag_to_iron_plate_sorted() {
+    // Do things.
+    let groups = vec![
+        Group {
+            quantity: None,
+            processor: &offshore_pump,
+            process: &water_pumping,
+        },
+        Group {
+            quantity: None,
+            processor: &ore_crusher_mk1,
+            process: &stone_crushing,
+        },
+        Group {
+            quantity: None,
+            processor: &liquifier_mk1,
+            process: &water_mineralization,
+        },
+        Group {
+            quantity: None,
+            processor: &crystallizer_mk1,
+            process: &mineralized_water_crystallization,
+        },
+        Group {
+            quantity: None,
+            processor: &ore_crusher_mk1,
+            process: &sapphirite_ore_crushing,
+        },
+        Group {
+            quantity: None,
+            processor: &ore_crusher_mk1,
+            process: &steratite_ore_crushing,
+        },
+        Group {
+            quantity: None,
+            processor: &ore_sorting_facility_mk1,
+            process: &crushed_sapphirite_ore_sorting,
+        },
+        Group {
+            quantity: None,
+            processor: &ore_sorting_facility_mk1,
+            process: &crushed_steratite_ore_sorting,
+        },
+        Group {
+            quantity: None,
+            processor: &stone_furnace_burning_charcoal,
+            process: &iron_ore_to_iron_plate,
+        },
+        Group {
+            quantity: None,
+            processor: &stone_furnace_burning_charcoal,
+            process: &copper_ore_to_copper_plate,
+        },
+        Group {
+            quantity: None,
+            processor: &boiler_mk1_burning_charcoal,
+            process: &boiler_mk1_power,
+        },
+    ];
+
+    solve_and_print(
+        groups,
+        vec![
+            (Material::Charcoal, 0.0),
+            (Material::CopperOre, 0.0),
+            // (Material::CopperPlate, 0.0),
+            (Material::CrushedSapphirite, 0.0),
+            (Material::CrushedSteratite, 0.0),
+            (Material::CrushedStone, 0.0),
+            (Material::IronOre, 0.0),
+            // (Material::IronPlate, 0.0),
+            // (Material::Joule, 0.0),
+            (Material::MineralizedWater, 0.0),
+            (Material::SapphiriteOre, 0.0),
+            (Material::Slag, -1.0), // Nonzero.
+            (Material::SteratiteOre, 0.0),
+            (Material::Water, 0.0),
+        ],
+    );
+}
+
 #[derive(Debug)]
 struct FixedGroup<'a> {
     quantity: f64,
