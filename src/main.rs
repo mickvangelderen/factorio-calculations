@@ -16,11 +16,11 @@ use processes::*;
 pub enum Material {
     Carbon,
     CarbonDioxide,
-    Coal,
-    Coke,
-    CokePellet,
+    // Coal,
+    Charcoal,
+    CharcoalPellet,
     ConcentratedMudWater,
-    CrushedCoal,
+    // CrushedCoal,
     CrushedStone,
     Fiber,
     GreenAlgae,
@@ -48,9 +48,9 @@ impl Material {
 
         match *self {
             Carbon => 6_000_000.0,
-            Coal => 8_000_000.0,
-            Coke => 5_000_000.0,
-            CokePellet => 30_000_000.0,
+            // Coal => 8_000_000.0,
+            Charcoal => 5_000_000.0,
+            CharcoalPellet => 30_000_000.0,
             Fiber => 1_000_000.0,
             Joule => 1.0,
             WoodPellet => 12_000_000.0,
@@ -83,9 +83,7 @@ pub struct Processor {
 
 fn main() {
     easy_early_energy();
-    // early_energy();
-    // advanced_early_energy();
-    // nodules();
+    early_energy();
 }
 
 fn easy_early_energy() {
@@ -167,6 +165,7 @@ fn easy_early_energy() {
 }
 
 fn early_energy() {
+    // Do things.
     let groups = vec![
         Group {
             quantity: None,
@@ -182,116 +181,9 @@ fn early_energy() {
             quantity: None,
             processor: &flare_stack,
             process: &burn_hydrogen,
-        },
-        Group {
-            quantity: None,
-            processor: &electrolyser_mk1,
-            process: &dirt_water_electrolysis,
-        },
-        Group {
-            quantity: None,
-            processor: &ore_crusher_mk1,
-            process: &stone_crushing,
-        },
-        Group {
-            quantity: None,
-            processor: &liquifier_mk1,
-            process: &water_mineralization,
-        },
-        Group {
-            quantity: None,
-            processor: &algae_farm_mk1,
-            process: &green_algae_growing,
-        },
-        Group {
-            quantity: None,
-            processor: &liquifier_mk1,
-            process: &green_algae_to_fiber,
-        },
-        Group {
-            quantity: None,
-            processor: &assembly_machine_mk1,
-            process: &fiber_to_wood_pellet,
-        },
-        Group {
-            quantity: None,
-            processor: &assembly_machine_mk1,
-            process: &wood_pellet_to_wood_brick,
-        },
-        Group {
-            quantity: None,
-            processor: &stone_furnace_burning_carbon,
-            process: &wood_brick_to_coal,
-        },
-        Group {
-            quantity: None,
-            processor: &liquifier_mk1,
-            process: &coal_to_carbon_dioxide,
         },
         Group {
             quantity: Some(1.0),
-            processor: &ore_crusher_mk1,
-            process: &coal_to_crushed_coal,
-        },
-        Group {
-            quantity: None,
-            processor: &stone_furnace_burning_carbon,
-            process: &burn_crushed_coal_to_coke,
-        },
-        Group {
-            quantity: None,
-            processor: &liquifier_mk1,
-            process: &coke_to_carbon,
-        },
-        Group {
-            quantity: None,
-            processor: &boiler_mk1_burning_carbon,
-            process: &boiler_mk1_power,
-        },
-    ];
-
-    solve_and_print(
-        groups,
-        vec![
-            (Material::Carbon, 0.0),
-            (Material::CarbonDioxide, 0.0),
-            (Material::Coal, 0.0),
-            (Material::Coke, 0.0),
-            (Material::CrushedCoal, 0.0),
-            (Material::CrushedStone, 0.0),
-            (Material::Fiber, 0.0),
-            (Material::GreenAlgae, 0.0),
-            (Material::Hydrogen, 0.0),
-            // (Material::Joule, 0.0),
-            (Material::MineralizedWater, 0.0),
-            (Material::Oxygen, 0.0),
-            (Material::Slag, 0.0),
-            (Material::Water, 0.0),
-            (Material::WoodBrick, 0.0),
-            (Material::WoodPellet, 0.0),
-        ],
-    );
-}
-
-fn advanced_early_energy() {
-    let groups = vec![
-        Group {
-            quantity: None,
-            processor: &offshore_pump,
-            process: &water_pumping,
-        },
-        Group {
-            quantity: None,
-            processor: &flare_stack,
-            process: &burn_oxygen,
-        },
-        Group {
-            quantity: None,
-            processor: &flare_stack,
-            process: &burn_hydrogen,
-        },
-        Group {
-            quantity: None,
             processor: &electrolyser_mk1,
             process: &dirt_water_electrolysis,
         },
@@ -306,7 +198,7 @@ fn advanced_early_energy() {
             process: &water_mineralization,
         },
         Group {
-            quantity: Some(10.0),
+            quantity: None,
             processor: &algae_farm_mk1,
             process: &green_algae_growing,
         },
@@ -327,47 +219,17 @@ fn advanced_early_energy() {
         },
         Group {
             quantity: None,
-            processor: &stone_furnace_burning_carbon,
-            process: &wood_brick_to_coal,
+            processor: &stone_furnace_burning_charcoal,
+            process: &wood_brick_to_charcoal,
         },
         Group {
             quantity: None,
             processor: &liquifier_mk1,
-            process: &coal_to_carbon_dioxide,
+            process: &charcoal_to_carbon_dioxide,
         },
         Group {
             quantity: None,
-            processor: &ore_crusher_mk1,
-            process: &coal_to_crushed_coal,
-        },
-        Group {
-            quantity: None,
-            processor: &hydro_plant_mk1,
-            process: &water_purification,
-        },
-        Group {
-            quantity: None,
-            processor: &clarifier,
-            process: &void_saline_water,
-        },
-        Group {
-            quantity: None,
-            processor: &liquifier_mk1,
-            process: &clean_coal_to_coke_and_sulfuric_waste_water,
-        },
-        Group {
-            quantity: None,
-            processor: &hydro_plant_mk1,
-            process: &sulfuric_waste_water_purification,
-        },
-        Group {
-            quantity: None,
-            processor: &liquifier_mk1,
-            process: &coke_to_carbon,
-        },
-        Group {
-            quantity: None,
-            processor: &boiler_mk1_burning_carbon,
+            processor: &boiler_mk1_burning_charcoal,
             process: &boiler_mk1_power,
         },
     ];
@@ -375,11 +237,8 @@ fn advanced_early_energy() {
     solve_and_print(
         groups,
         vec![
-            (Material::Carbon, 0.0),
             (Material::CarbonDioxide, 0.0),
-            (Material::Coal, 0.0),
-            (Material::Coke, 0.0),
-            (Material::CrushedCoal, 0.0),
+            (Material::Charcoal, 0.0),
             (Material::CrushedStone, 0.0),
             (Material::Fiber, 0.0),
             (Material::GreenAlgae, 0.0),
@@ -387,18 +246,13 @@ fn advanced_early_energy() {
             // (Material::Joule, 0.0),
             (Material::MineralizedWater, 0.0),
             (Material::Oxygen, 0.0),
-            (Material::PurifiedWater, 0.0),
-            (Material::SalineWater, 0.0),
             (Material::Slag, 0.0),
-            // (Material::Sulfur, 0.0),
-            (Material::SulfuricWasteWater, 0.0),
             (Material::Water, 0.0),
             (Material::WoodBrick, 0.0),
             (Material::WoodPellet, 0.0),
         ],
     );
 }
-
 #[derive(Debug)]
 struct FixedGroup<'a> {
     quantity: f64,
@@ -440,42 +294,6 @@ fn accumulate_groups(groups: &Vec<FixedGroup>) -> std::collections::BTreeMap<Mat
     }
 
     map
-}
-
-fn nodules() {
-
-
-    // Setup.
-    let groups = vec![
-        Group {
-            quantity: None,
-            processor: &offshore_pump,
-            process: &water_pumping,
-        },
-        Group {
-            quantity: Some(1.0),
-            processor: &seafloor_pump,
-            process: &pump_viscous_mud_water,
-        },
-        Group {
-            quantity: None,
-            processor: &washing_plant_mk1,
-            process: &wash_viscous_mud_water,
-        },
-        Group {
-            quantity: None,
-            processor: &washing_plant_mk1,
-            process: &heavy_mud_water_to_nodule,
-        },
-    ];
-
-    let fixed_materials = vec![
-        (Material::Water, 0.0),
-        (Material::HeavyMudWater, 0.0),
-        (Material::ViscousMudWater, 0.0),
-    ];
-
-    solve_and_print(groups, fixed_materials);
 }
 
 struct Group<'a> {
@@ -586,7 +404,7 @@ fn solve_and_print(groups: Vec<Group>, fixed_materials: Vec<(Material, f64)>) {
     println!();
     println!("Balance");
     for (i, (material, _)) in material_to_row.iter().enumerate() {
-        println!("{:>12.2} {:?}/s", x[groups.len() + i], material);
+        println!("{:>12.2} {:?}/m", x[groups.len() + i]*60.0, material);
     }
 
     let groups: Vec<FixedGroup> = groups.iter().enumerate().map(|(i, group)| {

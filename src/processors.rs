@@ -1,5 +1,13 @@
 use super::*;
 
+pub static boiler_mk1_burning_charcoal: Processor = Processor {
+    name: "boiler_mk1_burning_charcoal",
+    speed: 1.0,
+    energy_consumption: 3_600_000.0,
+    energy_source: Material::Charcoal,
+    drain: 0.0,
+};
+
 pub static boiler_mk1_burning_carbon: Processor = Processor {
     name: "boiler_mk1_burning_carbon",
     speed: 1.0,
@@ -86,6 +94,14 @@ pub static ore_crusher_mk1: Processor = Processor {
     energy_consumption: 100_000.0,
     energy_source: Material::Joule,
     drain: 3_300.0,
+};
+
+pub static stone_furnace_burning_charcoal: Processor = Processor {
+    name: "stone_furnace_burning_charcoal",
+    speed: 1.0,
+    energy_consumption: 180_000.0,
+    energy_source: Material::Charcoal,
+    drain: 0.0,
 };
 
 pub static stone_furnace_burning_carbon: Processor = Processor {

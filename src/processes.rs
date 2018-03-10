@@ -118,7 +118,7 @@ pub static fiber_to_wood_pellet: Process = Process {
 };
 
 pub static wood_pellet_to_carbon_dioxide: Process = Process {
-    name: "wood_pellet_to_coal",
+    name: "wood_pellet_to_carbon_dioxide",
     ingredients: &[
         Ingredient {
             material: Material::WoodPellet,
@@ -147,71 +147,41 @@ pub static wood_pellet_to_wood_brick: Process = Process {
     time: 2.0,
 };
 
-pub static wood_brick_to_coal: Process = Process {
-    name: "wood_brick_to_coal",
+pub static wood_brick_to_charcoal: Process = Process {
+    name: "wood_brick_to_charcoal",
     ingredients: &[
         Ingredient {
             material: Material::WoodBrick,
             quantity: -1.0,
         },
         Ingredient {
-            material: Material::Coal,
-            quantity: 3.0,
+            material: Material::Charcoal,
+            quantity: 6.0,
         },
     ],
     time: 3.5,
 };
 
-pub static coal_to_carbon_dioxide: Process = Process {
-    name: "coal_to_carbon_dioxide",
+pub static charcoal_to_carbon_dioxide: Process = Process {
+    name: "charcoal_to_carbon_dioxide",
     ingredients: &[
         Ingredient {
-            material: Material::Coal,
+            material: Material::Charcoal,
             quantity: -1.0,
         },
         Ingredient {
             material: Material::CarbonDioxide,
-            quantity: 50.0,
-        },
-    ],
-    time: 2.0,
-};
-
-pub static coal_to_crushed_coal: Process = Process {
-    name: "coal_to_crushed_coal",
-    ingredients: &[
-        Ingredient {
-            material: Material::Coal,
-            quantity: -1.0,
-        },
-        Ingredient {
-            material: Material::CrushedCoal,
-            quantity: 2.0,
+            quantity: 25.0,
         },
     ],
     time: 1.0,
 };
 
-pub static burn_crushed_coal_to_coke: Process = Process {
-    name: "burn_crushed_coal_to_coke",
+pub static charcoal_to_carbon: Process = Process {
+    name: "charcoal_to_carbon",
     ingredients: &[
         Ingredient {
-            material: Material::CrushedCoal,
-            quantity: -2.0,
-        },
-        Ingredient {
-            material: Material::Coke,
-            quantity: 2.0,
-        },
-    ],
-    time: 1.0,
-};
-
-pub static coke_to_carbon: Process = Process {
-    name: "coke_to_carbon",
-    ingredients: &[
-        Ingredient {
-            material: Material::Coke,
+            material: Material::Charcoal,
             quantity: -2.0,
         },
         Ingredient {
@@ -245,28 +215,28 @@ pub static water_purification: Process = Process {
     time: 1.0,
 };
 
-pub static clean_coal_to_coke_and_sulfuric_waste_water: Process = Process {
-    name: "clean_coal_to_coke_and_sulfuric_waste_water",
-    ingredients: &[
-        Ingredient {
-            material: Material::CrushedCoal,
-            quantity: -2.0,
-        },
-        Ingredient {
-            material: Material::PurifiedWater,
-            quantity: -50.0,
-        },
-        Ingredient {
-            material: Material::Coke,
-            quantity: 2.0,
-        },
-        Ingredient {
-            material: Material::SulfuricWasteWater,
-            quantity: 50.0,
-        },
-    ],
-    time: 4.0,
-};
+// pub static clean_coal_to_coke_and_sulfuric_waste_water: Process = Process {
+//     name: "clean_coal_to_coke_and_sulfuric_waste_water",
+//     ingredients: &[
+//         Ingredient {
+//             material: Material::CrushedCoal,
+//             quantity: -2.0,
+//         },
+//         Ingredient {
+//             material: Material::PurifiedWater,
+//             quantity: -50.0,
+//         },
+//         Ingredient {
+//             material: Material::Coke,
+//             quantity: 2.0,
+//         },
+//         Ingredient {
+//             material: Material::SulfuricWasteWater,
+//             quantity: 50.0,
+//         },
+//     ],
+//     time: 4.0,
+// };
 
 pub static sulfuric_waste_water_purification: Process = Process {
     name: "sulfuric_waste_water_purification",
