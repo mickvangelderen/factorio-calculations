@@ -513,10 +513,13 @@ fn solve_and_print(groups: Vec<Group>, fixed_materials: Vec<(Material, f64)>) {
     for (col, group) in groups.iter().enumerate() {
         for ingredient in group.process.ingredients {
             let row = *material_to_row.get(&ingredient.material).unwrap();
-            R[[row, col]] = group.processor.speed * ingredient.quantity / group.process.time;
+            // Add assign in case a recipe contains the same ingredient
+            // multiple times, even if it should have been simplified.
+            R[[row, col]] += group.processor.speed * ingredient.quantity / group.process.time;
         }
         let row = *material_to_row.get(&group.processor.energy_source).unwrap();
-        R[[row, col]] = -(group.processor.energy_consumption + group.processor.drain)/group.processor.energy_source.joules();
+        // Add assign because a value can have been written by one of the normal ingredients.
+        R[[row, col]] += -(group.processor.energy_consumption + group.processor.drain)/group.processor.energy_source.joules();
     }
 
     #[allow(non_snake_case)]
