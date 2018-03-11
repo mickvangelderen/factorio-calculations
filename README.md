@@ -37,80 +37,207 @@ coke.
 So yeah, actually used basic linear algebra! Pretty cool :smile:.
 
 ```
+early_energy_wood_pellet
 Setup
-        0.25 x water_pumping (offshore_pump)
-        0.38 x burn_oxygen (flare_stack)
-        0.50 x burn_hydrogen (flare_stack)
-        5.00 x dirt_water_electrolysis (electrolyser_mk1)
-        1.67 x stone_crushing (ore_crusher_mk1)
-        0.33 x water_mineralization (liquifier_mk1)
-       10.00 x green_algae_growing (algae_farm_mk1)
-        4.00 x green_algae_to_fiber (liquifier_mk1)
-        6.67 x fiber_to_wood_pellet (assembly_machine_mk1)
-        0.83 x wood_pellet_to_wood_brick (assembly_machine_mk1)
-        2.92 x wood_brick_to_coal (stone_furnace_burning_carbon)
-        2.16 x coal_to_carbon_dioxide (liquifier_mk1)
-        0.59 x coal_to_crushed_coal (ore_crusher_mk1)
-        0.88 x burn_crushed_coal_to_coke (stone_furnace_burning_carbon)
-        1.18 x coke_to_carbon (liquifier_mk1)
-        4.22 x boiler_mk1_carbon_to_power (boiler_mk1_burning_carbon)
+        0.05 x water_pumping (offshore_pump)
+        0.08 x burn_oxygen (flare_stack)
+        0.10 x burn_hydrogen (flare_stack)
+        1.00 x dirt_water_electrolysis (electrolyser_mk1)
+        0.33 x stone_crushing (ore_crusher_mk1)
+        0.07 x water_mineralization (liquifier_mk1)
+        2.00 x green_algae_growing (algae_farm_mk1)
+        0.80 x green_algae_to_fiber (liquifier_mk1)
+        1.33 x fiber_to_wood_pellet (assembly_machine_mk1)
+        0.19 x wood_pellet_to_carbon_dioxide (liquifier_mk1)
+        0.63 x boiler_mk1_power (boiler_mk1_burning_wood_pellet)
 
 Balance
-        0.00 Carbon/s
-        0.00 CarbonDioxide/s
-        0.00 Coal/s
-        0.00 Coke/s
-        0.00 CrushedCoal/s
-        0.00 CrushedStone/s
-        0.00 Fiber/s
-        0.00 GreenAlgae/s
-        0.00 Hydrogen/s
-  2784691.67 Joule/s
-        0.00 MineralizedWater/s
-        0.00 Oxygen/s
-        0.00 Slag/s
-        0.00 Water/s
-        0.00 WoodBrick/s
-        0.00 WoodPellet/s
+ 16247300.00 Joule/m
 
   Production  Consumption
-      158.82      -158.82 Carbon/m
-     4852.94     -4852.94 CarbonDioxide/m
-      150.00      -150.00 Coal/m
-      105.88      -105.88 Coke/m
-      105.88      -105.88 CrushedCoal/m
-      300.00      -300.00 CrushedStone/m
-      600.00      -600.00 Fiber/m
-     1200.00     -1200.00 GreenAlgae/m
-     6000.00     -6000.00 Hydrogen/m
-455955882.35 -288874382.35 Joule/m
-     3000.00     -3000.00 MineralizedWater/m
-     4500.00     -4500.00 Oxygen/m
-      150.00      -150.00 Slag/m
-    18000.00    -18000.00 Water/m
-       50.00       -50.00 WoodBrick/m
-      100.00      -100.00 WoodPellet/m
+      600.00      -600.00 CarbonDioxide/m
+       60.00       -60.00 CrushedStone/m
+      120.00      -120.00 Fiber/m
+      240.00      -240.00 GreenAlgae/m
+     1200.00     -1200.00 Hydrogen/m
+ 68571428.57 -52324128.57 Joule/m
+      600.00      -600.00 MineralizedWater/m
+      900.00      -900.00 Oxygen/m
+       30.00       -30.00 Slag/m
+     3600.00     -3600.00 Water/m
+       20.00       -20.00 WoodPellet/m
 
+early_energy_charcoal
 Setup
-        0.28 x water_pumping (offshore_pump)
-        1.00 x pump_viscous_mud_water (seafloor_pump)
-       10.00 x wash_viscous_mud_water (washing_plant_mk1)
-       25.00 x heavy_mud_water_to_nodule (washing_plant_mk1)
+        0.05 x water_pumping (offshore_pump)
+        0.08 x burn_oxygen (flare_stack)
+        0.10 x burn_hydrogen (flare_stack)
+        1.00 x dirt_water_electrolysis (electrolyser_mk1)
+        0.33 x stone_crushing (ore_crusher_mk1)
+        0.07 x water_mineralization (liquifier_mk1)
+        2.00 x green_algae_growing (algae_farm_mk1)
+        0.80 x green_algae_to_fiber (liquifier_mk1)
+        1.33 x fiber_to_wood_pellet (assembly_machine_mk1)
+        0.17 x wood_pellet_to_wood_brick (assembly_machine_mk1)
+        0.58 x wood_brick_to_charcoal (stone_furnace_burning_charcoal)
+        0.27 x charcoal_to_carbon_dioxide (liquifier_mk1)
+        0.80 x boiler_mk1_power (boiler_mk1_burning_charcoal)
 
 Balance
-        0.00 HeavyMudWater/s
- -3615500.00 Joule/s
-        3.00 Mud/s
-        7.50 Nodule/s
-        0.00 ViscousMudWater/s
-        0.00 Water/s
+ 32902700.00 Joule/m
 
   Production  Consumption
-    18000.00    -18000.00 HeavyMudWater/m
-        0.00 -216930000.00 Joule/m
-      180.00         0.00 Mud/m
-      450.00         0.00 Nodule/m
-    18000.00    -18000.00 ViscousMudWater/m
-    20250.00    -20250.00 Water/m
+      600.00      -600.00 CarbonDioxide/m
+       60.00       -60.00 Charcoal/m
+       60.00       -60.00 CrushedStone/m
+      120.00      -120.00 Fiber/m
+      240.00      -240.00 GreenAlgae/m
+     1200.00     -1200.00 Hydrogen/m
+ 86850000.00 -53947300.00 Joule/m
+      600.00      -600.00 MineralizedWater/m
+      900.00      -900.00 Oxygen/m
+       30.00       -30.00 Slag/m
+     3600.00     -3600.00 Water/m
+       10.00       -10.00 WoodBrick/m
+       20.00       -20.00 WoodPellet/m
 
+early_energy_partial_carbon
+Setup
+        0.05 x water_pumping (offshore_pump)
+        0.08 x burn_oxygen (flare_stack)
+        0.10 x burn_hydrogen (flare_stack)
+        1.00 x dirt_water_electrolysis (electrolyser_mk1)
+        0.33 x stone_crushing (ore_crusher_mk1)
+        0.07 x water_mineralization (liquifier_mk1)
+        2.00 x green_algae_growing (algae_farm_mk1)
+        0.80 x green_algae_to_fiber (liquifier_mk1)
+        1.33 x fiber_to_wood_pellet (assembly_machine_mk1)
+        0.17 x wood_pellet_to_wood_brick (assembly_machine_mk1)
+        0.58 x wood_brick_to_charcoal (stone_furnace_burning_charcoal)
+        0.43 x charcoal_to_carbon_dioxide (liquifier_mk1)
+        0.23 x charcoal_to_carbon (liquifier_mk1)
+        0.85 x boiler_mk1_power (boiler_mk1_burning_carbon)
+
+Balance
+ 35021567.53 Joule/m
+
+  Production  Consumption
+       30.65       -30.65 Carbon/m
+      957.62      -957.62 CarbonDioxide/m
+       60.00       -60.00 Charcoal/m
+       60.00       -60.00 CrushedStone/m
+      120.00      -120.00 Fiber/m
+      240.00      -240.00 GreenAlgae/m
+     1200.00     -1200.00 Hydrogen/m
+ 91958823.53 -56937256.00 Joule/m
+      600.00      -600.00 MineralizedWater/m
+      900.00      -900.00 Oxygen/m
+       30.00       -30.00 Slag/m
+     3600.00     -3600.00 Water/m
+       10.00       -10.00 WoodBrick/m
+       20.00       -20.00 WoodPellet/m
+
+early_energy_carbon
+Setup
+        0.05 x water_pumping (offshore_pump)
+        0.07 x burn_oxygen (flare_stack)
+        0.10 x burn_hydrogen (flare_stack)
+        1.00 x dirt_water_electrolysis (electrolyser_mk1)
+        0.33 x stone_crushing (ore_crusher_mk1)
+        0.07 x water_mineralization (liquifier_mk1)
+        2.00 x green_algae_growing (algae_farm_mk1)
+        0.80 x green_algae_to_fiber (liquifier_mk1)
+        1.33 x fiber_to_wood_pellet (assembly_machine_mk1)
+        0.17 x wood_pellet_to_wood_brick (assembly_machine_mk1)
+        0.58 x wood_brick_to_charcoal (stone_furnace_burning_carbon)
+        0.43 x charcoal_to_carbon_dioxide (liquifier_mk1)
+        0.24 x charcoal_to_carbon (liquifier_mk1)
+        0.85 x boiler_mk1_power (boiler_mk1_burning_carbon)
+
+Balance
+ 35098417.65 Joule/m
+
+  Production  Consumption
+       31.76       -31.76 Carbon/m
+      970.59      -970.59 CarbonDioxide/m
+       60.00       -60.00 Charcoal/m
+       60.00       -60.00 CrushedStone/m
+      120.00      -120.00 Fiber/m
+      240.00      -240.00 GreenAlgae/m
+     1200.00     -1200.00 Hydrogen/m
+ 92144117.65 -57045700.00 Joule/m
+      600.00      -600.00 MineralizedWater/m
+      900.00      -900.00 Oxygen/m
+       30.00       -30.00 Slag/m
+     3600.00     -3600.00 Water/m
+       10.00       -10.00 WoodBrick/m
+       20.00       -20.00 WoodPellet/m
+
+early_slag_to_iron_plate
+Setup
+        0.02 x water_pumping (offshore_pump)
+        0.67 x stone_crushing (ore_crusher_mk1)
+        0.14 x water_mineralization (liquifier_mk1)
+        0.14 x mineralized_water_crystallization (crystallizer_mk1)
+        0.04 x sapphirite_ore_crushing (ore_crusher_mk1)
+        0.02 x steratite_ore_crushing (ore_crusher_mk1)
+        0.27 x crushed_sapphirite_to_iron_plate (stone_furnace_burning_charcoal)
+        0.17 x crushed_steratite_to_copper_plate (stone_furnace_burning_charcoal)
+       -0.02 x boiler_mk1_power (boiler_mk1_burning_charcoal)
+
+Balance
+        2.93 CopperPlate/m
+        4.61 IronPlate/m
+ -9276167.54 Joule/m
+      -60.00 Slag/m
+
+  Production  Consumption
+        0.95        -0.95 Charcoal/m
+        2.93         0.00 CopperPlate/m
+        6.91        -6.91 CrushedSapphirite/m
+        4.40        -4.40 CrushedSteratite/m
+      125.65      -125.65 CrushedStone/m
+        4.61         0.00 IronPlate/m
+        0.00  -9276167.54 Joule/m
+     1256.54     -1256.54 MineralizedWater/m
+        6.91        -6.91 SapphiriteOre/m
+        0.00       -60.00 Slag/m
+        4.40        -4.40 SteratiteOre/m
+     1256.54     -1256.54 Water/m
+
+early_slag_to_iron_plate_sorted
+Setup
+        0.02 x water_pumping (offshore_pump)
+        0.70 x stone_crushing (ore_crusher_mk1)
+        0.15 x water_mineralization (liquifier_mk1)
+        0.15 x mineralized_water_crystallization (crystallizer_mk1)
+        0.04 x sapphirite_ore_crushing (ore_crusher_mk1)
+        0.03 x steratite_ore_crushing (ore_crusher_mk1)
+        0.04 x crushed_sapphirite_ore_sorting (ore_sorting_facility_mk1)
+        0.03 x crushed_steratite_ore_sorting (ore_sorting_facility_mk1)
+        0.21 x iron_ore_to_iron_plate (stone_furnace_burning_charcoal)
+        0.18 x copper_ore_to_copper_plate (stone_furnace_burning_charcoal)
+       -0.02 x boiler_mk1_power (boiler_mk1_burning_charcoal)
+
+Balance
+        3.09 CopperPlate/m
+        3.59 IronPlate/m
+ -9958642.86 Joule/m
+      -60.00 Slag/m
+
+  Production  Consumption
+        0.84        -0.84 Charcoal/m
+        4.12        -4.12 CopperOre/m
+        3.09         0.00 CopperPlate/m
+        7.25        -7.25 CrushedSapphirite/m
+        4.62        -4.62 CrushedSteratite/m
+      131.87      -131.87 CrushedStone/m
+        4.78        -4.78 IronOre/m
+        3.59         0.00 IronPlate/m
+        0.00  -9958642.86 Joule/m
+     1318.68     -1318.68 MineralizedWater/m
+        7.25        -7.25 SapphiriteOre/m
+        2.97       -62.97 Slag/m
+        4.62        -4.62 SteratiteOre/m
+     1318.68     -1318.68 Water/m
 ```

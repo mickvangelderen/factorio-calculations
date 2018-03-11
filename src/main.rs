@@ -89,13 +89,22 @@ pub struct Processor {
 }
 
 fn main() {
-    // easy_early_energy();
-    // early_energy();
+    println!("early_energy_wood_pellet");
+    early_energy_wood_pellet();
+    println!("early_energy_charcoal");
+    early_energy_charcoal();
+    println!("early_energy_partial_carbon");
+    early_energy_partial_carbon();
+    println!("early_energy_carbon");
+    early_energy_carbon();
+
+    println!("early_slag_to_iron_plate");
     early_slag_to_iron_plate();
+    println!("early_slag_to_iron_plate_sorted");
     early_slag_to_iron_plate_sorted();
 }
 
-fn easy_early_energy() {
+fn early_energy_wood_pellet() {
     // Do things.
     let groups = vec![
         Group {
@@ -173,7 +182,7 @@ fn easy_early_energy() {
     );
 }
 
-fn early_energy() {
+fn early_energy_charcoal() {
     // Do things.
     let groups = vec![
         Group {
@@ -192,7 +201,7 @@ fn early_energy() {
             process: &burn_hydrogen,
         },
         Group {
-            quantity: Some(8.0),
+            quantity: Some(1.0),
             processor: &electrolyser_mk1,
             process: &dirt_water_electrolysis,
         },
@@ -246,6 +255,198 @@ fn early_energy() {
     solve_and_print(
         groups,
         vec![
+            (Material::CarbonDioxide, 0.0),
+            (Material::Charcoal, 0.0),
+            (Material::CrushedStone, 0.0),
+            (Material::Fiber, 0.0),
+            (Material::GreenAlgae, 0.0),
+            (Material::Hydrogen, 0.0),
+            // (Material::Joule, 0.0),
+            (Material::MineralizedWater, 0.0),
+            (Material::Oxygen, 0.0),
+            (Material::Slag, 0.0),
+            (Material::Water, 0.0),
+            (Material::WoodBrick, 0.0),
+            (Material::WoodPellet, 0.0),
+        ],
+    );
+}
+
+fn early_energy_partial_carbon() {
+    // Do things.
+    let groups = vec![
+        Group {
+            quantity: None,
+            processor: &offshore_pump,
+            process: &water_pumping,
+        },
+        Group {
+            quantity: None,
+            processor: &flare_stack,
+            process: &burn_oxygen,
+        },
+        Group {
+            quantity: None,
+            processor: &flare_stack,
+            process: &burn_hydrogen,
+        },
+        Group {
+            quantity: Some(1.0),
+            processor: &electrolyser_mk1,
+            process: &dirt_water_electrolysis,
+        },
+        Group {
+            quantity: None,
+            processor: &ore_crusher_mk1,
+            process: &stone_crushing,
+        },
+        Group {
+            quantity: None,
+            processor: &liquifier_mk1,
+            process: &water_mineralization,
+        },
+        Group {
+            quantity: None,
+            processor: &algae_farm_mk1,
+            process: &green_algae_growing,
+        },
+        Group {
+            quantity: None,
+            processor: &liquifier_mk1,
+            process: &green_algae_to_fiber,
+        },
+        Group {
+            quantity: None,
+            processor: &assembly_machine_mk1,
+            process: &fiber_to_wood_pellet,
+        },
+        Group {
+            quantity: None,
+            processor: &assembly_machine_mk1,
+            process: &wood_pellet_to_wood_brick,
+        },
+        Group {
+            quantity: None,
+            processor: &stone_furnace_burning_charcoal,
+            process: &wood_brick_to_charcoal,
+        },
+        Group {
+            quantity: None,
+            processor: &liquifier_mk1,
+            process: &charcoal_to_carbon_dioxide,
+        },
+        Group {
+            quantity: None,
+            processor: &liquifier_mk1,
+            process: &charcoal_to_carbon,
+        },
+        Group {
+            quantity: None,
+            processor: &boiler_mk1_burning_carbon,
+            process: &boiler_mk1_power,
+        },
+    ];
+
+    solve_and_print(
+        groups,
+        vec![
+            (Material::Carbon, 0.0),
+            (Material::CarbonDioxide, 0.0),
+            (Material::Charcoal, 0.0),
+            (Material::CrushedStone, 0.0),
+            (Material::Fiber, 0.0),
+            (Material::GreenAlgae, 0.0),
+            (Material::Hydrogen, 0.0),
+            // (Material::Joule, 0.0),
+            (Material::MineralizedWater, 0.0),
+            (Material::Oxygen, 0.0),
+            (Material::Slag, 0.0),
+            (Material::Water, 0.0),
+            (Material::WoodBrick, 0.0),
+            (Material::WoodPellet, 0.0),
+        ],
+    );
+}
+
+fn early_energy_carbon() {
+    // Do things.
+    let groups = vec![
+        Group {
+            quantity: None,
+            processor: &offshore_pump,
+            process: &water_pumping,
+        },
+        Group {
+            quantity: None,
+            processor: &flare_stack,
+            process: &burn_oxygen,
+        },
+        Group {
+            quantity: None,
+            processor: &flare_stack,
+            process: &burn_hydrogen,
+        },
+        Group {
+            quantity: Some(1.0),
+            processor: &electrolyser_mk1,
+            process: &dirt_water_electrolysis,
+        },
+        Group {
+            quantity: None,
+            processor: &ore_crusher_mk1,
+            process: &stone_crushing,
+        },
+        Group {
+            quantity: None,
+            processor: &liquifier_mk1,
+            process: &water_mineralization,
+        },
+        Group {
+            quantity: None,
+            processor: &algae_farm_mk1,
+            process: &green_algae_growing,
+        },
+        Group {
+            quantity: None,
+            processor: &liquifier_mk1,
+            process: &green_algae_to_fiber,
+        },
+        Group {
+            quantity: None,
+            processor: &assembly_machine_mk1,
+            process: &fiber_to_wood_pellet,
+        },
+        Group {
+            quantity: None,
+            processor: &assembly_machine_mk1,
+            process: &wood_pellet_to_wood_brick,
+        },
+        Group {
+            quantity: None,
+            processor: &stone_furnace_burning_carbon,
+            process: &wood_brick_to_charcoal,
+        },
+        Group {
+            quantity: None,
+            processor: &liquifier_mk1,
+            process: &charcoal_to_carbon_dioxide,
+        },
+        Group {
+            quantity: None,
+            processor: &liquifier_mk1,
+            process: &charcoal_to_carbon,
+        },
+        Group {
+            quantity: None,
+            processor: &boiler_mk1_burning_carbon,
+            process: &boiler_mk1_power,
+        },
+    ];
+
+    solve_and_print(
+        groups,
+        vec![
+            (Material::Carbon, 0.0),
             (Material::CarbonDioxide, 0.0),
             (Material::Charcoal, 0.0),
             (Material::CrushedStone, 0.0),
