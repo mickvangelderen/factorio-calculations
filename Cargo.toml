@@ -5,3 +5,4 @@ authors = ["Mick van Gelderen <mickvangelderen@gmail.com>"]
 
 [dependencies]
 rulinalg = "*"
+approx = "*"

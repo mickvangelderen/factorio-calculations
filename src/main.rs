@@ -2,6 +2,8 @@
 #![allow(non_upper_case_globals)]
 
 extern crate rulinalg;
+#[macro_use]
+extern crate approx;
 
 use rulinalg::matrix::*;
 use rulinalg::vector::*;
@@ -562,7 +564,9 @@ fn solve_and_print(groups: Vec<Group>, fixed_materials: Vec<(Material, f64)>) {
     println!();
     println!("Balance");
     for (i, (material, _)) in material_to_row.iter().enumerate() {
-        println!("{:>12.2} {:?}/m", x[groups.len() + i]*60.0, material);
+        let production_per_second = x[groups.len() + i];
+        if relative_eq!(production_per_second, 0.0) { continue; }
+        println!("{:>12.2} {:?}/m", production_per_second*60.0, material);
     }
 
     let groups: Vec<FixedGroup> = groups.iter().enumerate().map(|(i, group)| {
