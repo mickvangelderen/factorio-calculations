@@ -53,28 +53,28 @@ function ingredient_to_rust(ingredient) {
     const { name, amount, type } = ingredient;
     if (isNumber(amount)) {
         if (type === "item") {
-                return '' +
-        `Ingredient::Item {
-                name: "${name}",
-                amount: ${amount},
-        }`;
+                return `
+        Ingredient::Item {
+            name: "${name}",
+            amount: ${amount},
+        },`;
         }
         if (type == "fluid") {
             const { minimum_temperature, maximum_temperature } = ingredient;
             if (isNumber(minimum_temperature) && isNumber(maximum_temperature)) {
-                return '' +
-        `Ingredient::FluidTemp {
+                return `
+        Ingredient::FluidTemp {
             name: "${name}",
             amount: ${amount},
             minimum_temperature: ${minimum_temperature},
             maximum_temperature: ${maximum_temperature},
-        }`;
+        },`;
             } else {
-                return '' +
-        `Ingredient::Fluid {
+                return `
+        Ingredient::Fluid {
             name: "${name}",
             amount: ${amount},
-        }`;
+        },`;
             }
         }
     }
@@ -93,61 +93,61 @@ function product_to_rust(product) {
     if (product.type === "item") {
         const { name, amount } = product;
         if (isNumber(amount)) {
-            return '' +
-        `Product::Item {
+            return `
+        Product::Item {
             name: "${name}",
             amount: ${amount},
-        }`;
+        },`;
         }
         const { amount_min, amount_max, probability } = product;
         if (isNumber(amount_min) && isNumber(amount_max) && isNumber(probability)) {
-            return '' +
-        `Product::ItemChance {
+            return `
+        Product::ItemChance {
             name: "${name}",
             amount_min: ${amount_min},
             amount_max: ${amount_max},
             probability: ${probability},
-        }`;
+        },`;
         }
     } else if (product.type === "fluid") {
         const { name, amount } = product;
         if (isNumber(amount)) {
             const { temperature } = product;
             if (isNumber(temperature)) {
-                return '' +
-        `Product::FluidTemp {
+                return `
+        Product::FluidTemp {
             name: "${name}",
             amount: ${amount},
             temperature: ${temperature},
-        }`;
+        },`;
             } else {
-                return '' +
-        `Product::Fluid {
+                return `
+        Product::Fluid {
             name: "${name}",
             amount: ${amount},
-        }`;
+        },`;
             }
         }
         const { amount_min, amount_max, probability } = product;
         if (isNumber(amount_min) && isNumber(amount_max) && isNumber(probability)) {
             const { temperature } = product;
             if (isNumber(temperature)) {
-                return '' +
-                    `Product::FluidChanceTemp {
+                return `
+        Product::FluidChanceTemp {
             name: "${name}",
             amount_min: ${amount_min},
             amount_max: ${amount_max},
             probability: ${probability},
             temperature: ${temperature},
-        }`;
+        },`;
             } else {
-                return '' +
-                    `Product::FluidChance {
+                return `
+        Product::FluidChance {
             name: "${name}",
             amount_min: ${amount_min},
             amount_max: ${amount_max},
             probability: ${probability},
-        }`;
+        },`;
             }
         }
     }
@@ -156,16 +156,16 @@ function product_to_rust(product) {
 }
 
 const recipes_rust = Object.values(recipes).map(recipe => {
-    return `static ${constant_case(recipe.name)}: Recipe = Recipe {
+    return `
+static ${constant_case(recipe.name)}: Recipe = Recipe {
     name: "${recipe.name}",
-    ingredients: [
-        ${recipe.ingredients.map(ingredient_to_rust).join(',\n')}
+    ingredients: [${recipe.ingredients.map(ingredient_to_rust).join('')}
     ],
-    products: [
-        ${recipe.products.map(product_to_rust).join(',\n')}
+    products: [${recipe.products.map(product_to_rust).join('')}
     ],
     time: ${recipe.energy_required}
-};`;
-}).join('\n\n');
+};
+`;
+}).join('');
 
 fs.writeFileSync('recipes.rs', recipes_rust);
