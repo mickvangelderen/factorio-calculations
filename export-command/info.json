@@ -1,0 +1,8 @@
+{
+    "name": "export-command",
+    "version": "0.1.0",
+    "factorio_version": "0.16.51",
+    "title": "Export Command",
+    "author": "mickvangelderen",
+    "description": "Add a command to export all recipes, items, entities and more as JSON."
+}
