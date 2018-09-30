@@ -39,85 +39,126 @@ enum Product {
 }
 */
 
-function process_ingredient(ingredient) {
-    if (ingredient.type == "item") {
+function isNumber(value) {
+    return typeof value === "number";
+}
 
-    } else if (ingredient.type == "fluid") {
-
-    } else {
-        console.log(ingredient);
-        throw new Error("Weird ingredient");
+// type :: string: "item" or "fluid".
+// name :: string: Prototype name of the required item or fluid.
+// amount :: uint: Amount of the item.
+// minimum_temperature :: uint (optional): The minimum fluid temperature required. Has no effect if type is '"item"'.
+// maximum_temperature :: uint (optional): The maximum fluid temperature allowed. Has no effect if type is '"item"'.
+function ingredient_to_rust(ingredient) {
+    const { name, type } = ingredient;
+    if (type === "item") {
+        const { amount } = ingredient;
+        if (isNumber(amount)) {
+            return '' +
+        `Ingredient::Item {
+                name: "${name}",
+                amount: ${amount},
+        }`;
+        }
     }
+    if (type == "fluid") {
+        const { amount, minimum_temperature, maximum_temperature } = ingredient;
+        if (isNumber(amount) && isNumber(minimum_temperature) && isNumber(maximum_temperature)) {
+            return '' +
+        `Ingredient::Fluid {
+            name: "${name}",
+            amount: ${amount},
+            minimum_temperature: ${minimum_temperature},
+            maximum_temperature: ${maximum_temperature},
+        }`;
+        }
+    }
+    console.error(ingredient);
+    throw new Error("Invalid ingredient.");
 }
-    return {
-        type: ingredient.type,
-        name: snake_case(ingredient.name),
-        amount: ingredient.amount,
-    };
+
+// type :: string: "item" or "fluid".
+// name :: string: Prototype name of the result.
+// amount :: float (optional): Amount of the item or fluid to give. If not specified, amount_min, amount_max and probability must all be specified.
+// temperature :: uint (optional): The fluid temperature of this product. Has no effect if type is '"item"'.
+// amount_min :: uint (optional): Minimal amount of the item or fluid to give. Has no effect when amount is specified.
+// amount_max :: uint (optional): Maximum amount of the item or fluid to give. Has no effect when amount is specified.
+// probability :: double (optional): A value in range [0, 1]. Item or fluid is only given with this probability; otherwise no product is produced. Has no effect when amount is specified.
+function product_to_rust(product) {
+    if (product.type === "item") {
+        const { name, amount } = product;
+        if (isNumber(amount)) {
+            return '' +
+        `Product::Item {
+            name: "${name}",
+            amount: ${amount},
+        }`;
+        }
+        const { amount_min, amount_max, probability } = products;
+        if (isNumber(amount) && isNumber(amount_max) && isNumber(probability)) {
+            return '' +
+        `Product::ItemChance {
+            name: "${name}",
+            amount_min: ${amount_min},
+            amount_max: ${amount_max},
+            probability: ${probability},
+        }`;
+        }
+    } else if (product.type === "fluid") {
+        const { name, amount } = product;
+        if (isNumber(amount)) {
+            const { temperature } = product;
+            if (isNumber(temperature)) {
+                return '' +
+        `Product::FluidTemp {
+            name: "${name}",
+            amount: ${amount},
+            temperature: ${temperature},
+        }`;
+            } else {
+                return '' +
+        `Product::Fluid {
+            name: "${name}",
+            amount: ${amount},
+        }`;
+            }
+        }
+        const { amount_min, amount_max, probability } = products;
+        if (isNumber(amount) && isNumber(amount_max) && isNumber(probability)) {
+            if (isNumber(temperature)) {
+                return '' +
+                    `Product::FluidChanceTemp {
+            name: "${name}",
+            amount_min: ${amount_min},
+            amount_max: ${amount_max},
+            probability: ${probability},
+            temperature: ${temperature},
+        }`;
+            } else {
+                return '' +
+                    `Product::FluidChance {
+            name: "${name}",
+            amount_min: ${amount_min},
+            amount_max: ${amount_max},
+            probability: ${probability},
+        }`;
+            }
+        }
+    }
+    console.error(product);
+    throw new Error("Invalid product.");
 }
 
-let r = Object.keys(recipes).map(id => {
-    let recipe = recipes[id];
-    return {
-        name: snake_case(recipe.name),
-        ingredients: recipe.ingredients.map(ingredient => {
-        }).concat(
-            recipe.products.map(product => {
-                return {
+const recipes_rust = Object.values(recipes).map(recipe => {
+    return `static ${constant_case(recipe.name)}: Recipe = Recipe {
+    name: "${recipe.name}",
+    ingredients: [
+        ${recipe.ingredients.map(ingredient_to_rust).join(',\n')}
+    ],
+    products: [
+        ${recipe.products.map(product_to_rust).join(',\n')}
+    ],
+    time: ${recipe.energy_required}
+};`;
+}).join('\n');
 
-                };
-            })
-        ),
-    };
-});
-
-// "ingredients": [
-//     {
-//         "type": "item",
-//         "name": "sulfur",
-//         "amount": 5
-//     },
-//     {
-//         "type": "item",
-//         "name": "iron-plate",
-//         "amount": 1
-//     },
-//     {
-//         "type": "fluid",
-//         "name": "water-purified",
-//         "amount": 100
-//     }
-// ],
-// "products": [
-//     {
-//         "type": "fluid",
-//         "name": "liquid-sulfuric-acid",
-//         "amount_min": 50,
-//         "amount_max": 50,
-//         "probability": 1
-//     }
-// ],
-console.log(r);
-
-// pub static dirt_water_electrolysis: Process = Process {
-//     name: "dirt_water_electrolysis",
-//     ingredients: &[
-//         Ingredient {
-//             material: Material::Water,
-//             quantity: -100.0,
-//         },
-//         Ingredient {
-//             material: Material::Oxygen,
-//             quantity: 30.0,
-//         },
-//         Ingredient {
-//             material: Material::Hydrogen,
-//             quantity: 40.0,
-//         },
-//         Ingredient {
-//             material: Material::Slag,
-//             quantity: 1.0,
-//         },
-//     ],
-//     time: 2.0,
-// };
+fs.writeFileSync('recipes.rs', recipes_rust);
