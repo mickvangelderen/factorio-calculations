@@ -129,7 +129,7 @@ function transform_LuaItemPrototype(value)
     -- loot_pickup_distance_bonus = value.loot_pickup_distance_bonus,
     -- resource_reach_distance_bonus = value.resource_reach_distance_bonus,
     -- module_effects = value.module_effects,
-    -- category = value.category,
+    category = value.category,
     -- tier = value.tier,
     -- limitations = value.limitations,
     -- limitation_message_key = value.limitation_message_key,
@@ -320,17 +320,46 @@ function transform_LuaEntityPrototype(value)
   }
 end
 
-function on_export(event)
-  game.write_file("recipes.json", json.encode(
-                    map(transform_LuaRecipePrototype, game.recipe_prototypes)
-  ))
+function transform_LuaFluidPrototype(value)
+  if value == nil then return value end
+  return {
+    name = value.name,
+    -- localised_name = value.localised_name,
+    -- localised_description = value.localised_description,
+    default_temperature = value.default_temperature,
+    max_temperature = value.max_temperature,
+    heat_capacity = value.heat_capacity,
+    pressure_to_speed_ratio = value.pressure_to_speed_ratio,
+    flow_to_energy_ratio = value.flow_to_energy_ratio,
+    max_push_amount = value.max_push_amount,
+    ratio_to_push = value.ratio_to_push,
+    order = value.order,
+    group = transform_LuaGroup(value.group),
+    subgroup = transform_LuaSubGroup(value.subgroup),
+    base_color = value.base_color,
+    flow_color = value.flow_color,
+    gas_temperature = value.gas_temperature,
+    emissions_multiplier = value.emissions_multiplier,
+    fuel_value = value.fuel_value,
+    valid = value.valid
+  }
+end
 
+function on_export(event)
   game.write_file("items.json", json.encode(
                     map(transform_LuaItemPrototype, game.item_prototypes)
   ))
 
+  game.write_file("fluids.json", json.encode(
+                    map(transform_LuaFluidPrototype, game.fluid_prototypes)
+  ))
+
   game.write_file("entities.json", json.encode(
                     map(transform_LuaEntityPrototype, game.entity_prototypes)
+  ))
+
+  game.write_file("recipes.json", json.encode(
+                    map(transform_LuaRecipePrototype, game.recipe_prototypes)
   ))
 end
 

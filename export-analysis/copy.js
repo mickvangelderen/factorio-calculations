@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-const file_names = [ 'recipes', 'items', 'entities' ];
+const file_names = [ 'items', 'fluids', 'entities', 'recipes' ];
 
 for (var file_name of file_names) {
     const file_path = '/home/mick/.factorio/script-output/' + file_name + '.json';

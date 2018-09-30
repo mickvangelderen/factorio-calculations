@@ -10302,6 +10302,7 @@
         },
         "rocket_launch_products": [],
         "can_be_mod_opened": false,
+        "category": "speed",
         "valid": true
     },
     "speed-module-3": {
@@ -10364,6 +10365,7 @@
         },
         "rocket_launch_products": [],
         "can_be_mod_opened": false,
+        "category": "speed",
         "valid": true
     },
     "speed-module-5": {
@@ -10426,6 +10428,7 @@
         },
         "rocket_launch_products": [],
         "can_be_mod_opened": false,
+        "category": "speed",
         "valid": true
     },
     "speed-module-7": {
@@ -10488,6 +10491,7 @@
         },
         "rocket_launch_products": [],
         "can_be_mod_opened": false,
+        "category": "speed",
         "valid": true
     },
     "effectivity-module": {
@@ -10550,6 +10554,7 @@
         },
         "rocket_launch_products": [],
         "can_be_mod_opened": false,
+        "category": "effectivity",
         "valid": true
     },
     "effectivity-module-3": {
@@ -10612,6 +10617,7 @@
         },
         "rocket_launch_products": [],
         "can_be_mod_opened": false,
+        "category": "effectivity",
         "valid": true
     },
     "effectivity-module-5": {
@@ -10674,6 +10680,7 @@
         },
         "rocket_launch_products": [],
         "can_be_mod_opened": false,
+        "category": "effectivity",
         "valid": true
     },
     "effectivity-module-7": {
@@ -10736,6 +10743,7 @@
         },
         "rocket_launch_products": [],
         "can_be_mod_opened": false,
+        "category": "effectivity",
         "valid": true
     },
     "productivity-module": {
@@ -10798,6 +10806,7 @@
         },
         "rocket_launch_products": [],
         "can_be_mod_opened": false,
+        "category": "productivity",
         "valid": true
     },
     "productivity-module-3": {
@@ -10860,6 +10869,7 @@
         },
         "rocket_launch_products": [],
         "can_be_mod_opened": false,
+        "category": "productivity",
         "valid": true
     },
     "productivity-module-5": {
@@ -10922,6 +10932,7 @@
         },
         "rocket_launch_products": [],
         "can_be_mod_opened": false,
+        "category": "productivity",
         "valid": true
     },
     "productivity-module-7": {
@@ -10984,6 +10995,7 @@
         },
         "rocket_launch_products": [],
         "can_be_mod_opened": false,
+        "category": "productivity",
         "valid": true
     },
     "beacon": {
