@@ -1,5 +1,6 @@
 const fs = require('fs');
 const snake_case = require('snake-case');
+const constant_case = require('constant-case');
 
 function read_json_file(path) {
     return JSON.parse(fs.readFileSync(path, 'utf8'));
@@ -49,27 +50,32 @@ function isNumber(value) {
 // minimum_temperature :: uint (optional): The minimum fluid temperature required. Has no effect if type is '"item"'.
 // maximum_temperature :: uint (optional): The maximum fluid temperature allowed. Has no effect if type is '"item"'.
 function ingredient_to_rust(ingredient) {
-    const { name, type } = ingredient;
-    if (type === "item") {
-        const { amount } = ingredient;
-        if (isNumber(amount)) {
-            return '' +
+    const { name, amount, type } = ingredient;
+    if (isNumber(amount)) {
+        if (type === "item") {
+                return '' +
         `Ingredient::Item {
                 name: "${name}",
                 amount: ${amount},
         }`;
         }
-    }
-    if (type == "fluid") {
-        const { amount, minimum_temperature, maximum_temperature } = ingredient;
-        if (isNumber(amount) && isNumber(minimum_temperature) && isNumber(maximum_temperature)) {
-            return '' +
-        `Ingredient::Fluid {
+        if (type == "fluid") {
+            const { minimum_temperature, maximum_temperature } = ingredient;
+            if (isNumber(minimum_temperature) && isNumber(maximum_temperature)) {
+                return '' +
+        `Ingredient::FluidTemp {
             name: "${name}",
             amount: ${amount},
             minimum_temperature: ${minimum_temperature},
             maximum_temperature: ${maximum_temperature},
         }`;
+            } else {
+                return '' +
+        `Ingredient::Fluid {
+            name: "${name}",
+            amount: ${amount},
+        }`;
+            }
         }
     }
     console.error(ingredient);
@@ -93,8 +99,8 @@ function product_to_rust(product) {
             amount: ${amount},
         }`;
         }
-        const { amount_min, amount_max, probability } = products;
-        if (isNumber(amount) && isNumber(amount_max) && isNumber(probability)) {
+        const { amount_min, amount_max, probability } = product;
+        if (isNumber(amount_min) && isNumber(amount_max) && isNumber(probability)) {
             return '' +
         `Product::ItemChance {
             name: "${name}",
@@ -122,8 +128,9 @@ function product_to_rust(product) {
         }`;
             }
         }
-        const { amount_min, amount_max, probability } = products;
-        if (isNumber(amount) && isNumber(amount_max) && isNumber(probability)) {
+        const { amount_min, amount_max, probability } = product;
+        if (isNumber(amount_min) && isNumber(amount_max) && isNumber(probability)) {
+            const { temperature } = product;
             if (isNumber(temperature)) {
                 return '' +
                     `Product::FluidChanceTemp {
@@ -159,6 +166,6 @@ const recipes_rust = Object.values(recipes).map(recipe => {
     ],
     time: ${recipe.energy_required}
 };`;
-}).join('\n');
+}).join('\n\n');
 
 fs.writeFileSync('recipes.rs', recipes_rust);
