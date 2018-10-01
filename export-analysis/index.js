@@ -6,43 +6,51 @@ function read_json_file(path) {
     return JSON.parse(fs.readFileSync(path, 'utf8'));
 }
 
-const recipes = read_json_file('recipes.json');
-const entities = read_json_file('entities.json');
-const items = read_json_file('items.json');
-
-/*
-enum Ingredient {
-    Item {
-        name: String,
-        amount: u32,
-    },
-    Fluid {
-        name: String,
-        amount: u32,
-    },
-    FluidWithTemp {
-        name: String,
-        amount: u32,
-        min_temp: u32,
-        max_temp: u32,
-    },
-}
-
-enum Product {
-    Item {
-        name: String,
-        amount: u32,
-    },
-    Fluid {
-        name: String,
-        amount: u32,
-    },
-}
-*/
-
 function isNumber(value) {
     return typeof value === "number";
 }
+
+function printFloat(value) {
+    return Number.parseFloat(value).toPrecision(21);
+}
+
+const items = read_json_file('items.json');
+const fluids = read_json_file('fluids.json');
+const entities = read_json_file('entities.json');
+const recipes = read_json_file('recipes.json');
+
+// https://lua-api.factorio.com/0.16.51/LuaItemPrototype.html
+const items_rust = Object.values(items).map(item => {
+    const { name, fuel_value } = item;
+    return `
+static ${constant_case(name)}: Item = Item {
+    name: "${name}",
+    fuel_value: ${printFloat(fuel_value)},
+}
+`;
+}).join('');
+
+// https://lua-api.factorio.com/0.16.51/LuaFluidPrototype.html
+const fluids_rust = Object.values(fluids).map(fluid => {
+    const { name, fuel_value } = fluid;
+    return `
+static ${constant_case(name)}: Fluid = Fluid {
+    name: "${name}",
+    fuel_value: ${printFloat(fuel_value)},
+}
+`;
+}).join('');
+
+// https://lua-api.factorio.com/0.16.51/LuaEntityPrototype.html
+const entities_rust = Object.values(entities).map(entity => {
+    const { name, crafting_speed } = entity;
+    return `
+static ${constant_case(name)}: Entity = Entity {
+    name: "${name}",
+    crafting_speed: ${isNumber(crafting_speed) ? `Some(${printFloat(crafting_speed)})` : 'None'},
+}
+`;
+}).join('');
 
 // type :: string: "item" or "fluid".
 // name :: string: Prototype name of the required item or fluid.
@@ -168,4 +176,7 @@ static ${constant_case(recipe.name)}: Recipe = Recipe {
 `;
 }).join('');
 
+fs.writeFileSync('items.rs', items_rust);
+fs.writeFileSync('fluids.rs', fluids_rust);
+fs.writeFileSync('entities.rs', entities_rust);
 fs.writeFileSync('recipes.rs', recipes_rust);

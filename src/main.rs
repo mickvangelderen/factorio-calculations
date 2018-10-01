@@ -6,6 +6,7 @@ extern crate rulinalg;
 use rulinalg::matrix::*;
 use rulinalg::vector::*;
 
+mod model;
 mod processors;
 mod processes;
 
