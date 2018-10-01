@@ -7,64 +7,12 @@ use rulinalg::matrix::*;
 use rulinalg::vector::*;
 
 mod model;
-mod processors;
-mod processes;
-
-use processors::*;
-use processes::*;
-
-#[derive(Debug, Eq, PartialEq, Hash, Ord, PartialOrd, Copy, Clone)]
-pub enum Material {
-    Carbon,
-    CarbonDioxide,
-    Coal,
-    Coke,
-    CokePellet,
-    ConcentratedMudWater,
-    CrushedCoal,
-    CrushedStone,
-    Fiber,
-    GreenAlgae,
-    HeavyMudWater,
-    Hydrogen,
-    Joule,
-    MineralizedWater,
-    Mud,
-    Nodule,
-    Oxygen,
-    PurifiedWater,
-    SalineWater,
-    Slag,
-    Sulfur,
-    SulfuricWasteWater,
-    ViscousMudWater,
-    Water,
-    WoodBrick,
-    WoodPellet,
-}
-
-impl Material {
-    fn joules(&self) -> f64 {
-        use Material::*;
-
-        match *self {
-            Carbon => 6_000_000.0,
-            Coal => 8_000_000.0,
-            Coke => 5_000_000.0,
-            CokePellet => 30_000_000.0,
-            Fiber => 1_000_000.0,
-            Joule => 1.0,
-            WoodPellet => 12_000_000.0,
-            _ => 0.0,
-        }
-    }
-}
-
-#[derive(Debug)]
-pub struct Ingredient {
-    material: Material,
-    quantity: f64,
-}
+mod items;
+mod fluids;
+mod entities;
+mod recipes;
+// mod processors;
+// mod processes;
 
 #[derive(Debug)]
 pub struct Process {
@@ -89,316 +37,316 @@ fn main() {
     // nodules();
 }
 
-fn easy_early_energy() {
-    // Do things.
-    let groups = vec![
-        Group {
-            quantity: None,
-            processor: &offshore_pump,
-            process: &water_pumping,
-        },
-        Group {
-            quantity: None,
-            processor: &flare_stack,
-            process: &burn_oxygen,
-        },
-        Group {
-            quantity: None,
-            processor: &flare_stack,
-            process: &burn_hydrogen,
-        },
-        Group {
-            quantity: Some(1.0),
-            processor: &electrolyser_mk1,
-            process: &dirt_water_electrolysis,
-        },
-        Group {
-            quantity: None,
-            processor: &ore_crusher_mk1,
-            process: &stone_crushing,
-        },
-        Group {
-            quantity: None,
-            processor: &liquifier_mk1,
-            process: &water_mineralization,
-        },
-        Group {
-            quantity: None,
-            processor: &algae_farm_mk1,
-            process: &green_algae_growing,
-        },
-        Group {
-            quantity: None,
-            processor: &liquifier_mk1,
-            process: &green_algae_to_fiber,
-        },
-        Group {
-            quantity: None,
-            processor: &assembly_machine_mk1,
-            process: &fiber_to_wood_pellet,
-        },
-        Group {
-            quantity: None,
-            processor: &liquifier_mk1,
-            process: &wood_pellet_to_carbon_dioxide,
-        },
-        Group {
-            quantity: None,
-            processor: &boiler_mk1_burning_wood_pellet,
-            process: &boiler_mk1_power,
-        },
-    ];
+// fn easy_early_energy() {
+//     // Do things.
+//     let groups = vec![
+//         Group {
+//             quantity: None,
+//             processor: &offshore_pump,
+//             process: &water_pumping,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &flare_stack,
+//             process: &burn_oxygen,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &flare_stack,
+//             process: &burn_hydrogen,
+//         },
+//         Group {
+//             quantity: Some(1.0),
+//             processor: &electrolyser_mk1,
+//             process: &dirt_water_electrolysis,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &ore_crusher_mk1,
+//             process: &stone_crushing,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &liquifier_mk1,
+//             process: &water_mineralization,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &algae_farm_mk1,
+//             process: &green_algae_growing,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &liquifier_mk1,
+//             process: &green_algae_to_fiber,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &assembly_machine_mk1,
+//             process: &fiber_to_wood_pellet,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &liquifier_mk1,
+//             process: &wood_pellet_to_carbon_dioxide,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &boiler_mk1_burning_wood_pellet,
+//             process: &boiler_mk1_power,
+//         },
+//     ];
 
-    solve_and_print(
-        groups,
-        vec![
-            (Material::CarbonDioxide, 0.0),
-            (Material::CrushedStone, 0.0),
-            (Material::Fiber, 0.0),
-            (Material::GreenAlgae, 0.0),
-            (Material::Hydrogen, 0.0),
-            // (Material::Joule, 0.0),
-            (Material::MineralizedWater, 0.0),
-            (Material::Oxygen, 0.0),
-            (Material::Slag, 0.0),
-            (Material::Water, 0.0),
-            (Material::WoodPellet, 0.0),
-        ],
-    );
-}
+//     solve_and_print(
+//         groups,
+//         vec![
+//             (Material::CarbonDioxide, 0.0),
+//             (Material::CrushedStone, 0.0),
+//             (Material::Fiber, 0.0),
+//             (Material::GreenAlgae, 0.0),
+//             (Material::Hydrogen, 0.0),
+//             // (Material::Joule, 0.0),
+//             (Material::MineralizedWater, 0.0),
+//             (Material::Oxygen, 0.0),
+//             (Material::Slag, 0.0),
+//             (Material::Water, 0.0),
+//             (Material::WoodPellet, 0.0),
+//         ],
+//     );
+// }
 
-fn early_energy() {
-    let groups = vec![
-        Group {
-            quantity: None,
-            processor: &offshore_pump,
-            process: &water_pumping,
-        },
-        Group {
-            quantity: None,
-            processor: &flare_stack,
-            process: &burn_oxygen,
-        },
-        Group {
-            quantity: None,
-            processor: &flare_stack,
-            process: &burn_hydrogen,
-        },
-        Group {
-            quantity: None,
-            processor: &electrolyser_mk1,
-            process: &dirt_water_electrolysis,
-        },
-        Group {
-            quantity: None,
-            processor: &ore_crusher_mk1,
-            process: &stone_crushing,
-        },
-        Group {
-            quantity: None,
-            processor: &liquifier_mk1,
-            process: &water_mineralization,
-        },
-        Group {
-            quantity: None,
-            processor: &algae_farm_mk1,
-            process: &green_algae_growing,
-        },
-        Group {
-            quantity: None,
-            processor: &liquifier_mk1,
-            process: &green_algae_to_fiber,
-        },
-        Group {
-            quantity: None,
-            processor: &assembly_machine_mk1,
-            process: &fiber_to_wood_pellet,
-        },
-        Group {
-            quantity: None,
-            processor: &assembly_machine_mk1,
-            process: &wood_pellet_to_wood_brick,
-        },
-        Group {
-            quantity: None,
-            processor: &stone_furnace_burning_carbon,
-            process: &wood_brick_to_coal,
-        },
-        Group {
-            quantity: None,
-            processor: &liquifier_mk1,
-            process: &coal_to_carbon_dioxide,
-        },
-        Group {
-            quantity: Some(1.0),
-            processor: &ore_crusher_mk1,
-            process: &coal_to_crushed_coal,
-        },
-        Group {
-            quantity: None,
-            processor: &stone_furnace_burning_carbon,
-            process: &burn_crushed_coal_to_coke,
-        },
-        Group {
-            quantity: None,
-            processor: &liquifier_mk1,
-            process: &coke_to_carbon,
-        },
-        Group {
-            quantity: None,
-            processor: &boiler_mk1_burning_carbon,
-            process: &boiler_mk1_power,
-        },
-    ];
+// fn early_energy() {
+//     let groups = vec![
+//         Group {
+//             quantity: None,
+//             processor: &offshore_pump,
+//             process: &water_pumping,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &flare_stack,
+//             process: &burn_oxygen,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &flare_stack,
+//             process: &burn_hydrogen,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &electrolyser_mk1,
+//             process: &dirt_water_electrolysis,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &ore_crusher_mk1,
+//             process: &stone_crushing,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &liquifier_mk1,
+//             process: &water_mineralization,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &algae_farm_mk1,
+//             process: &green_algae_growing,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &liquifier_mk1,
+//             process: &green_algae_to_fiber,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &assembly_machine_mk1,
+//             process: &fiber_to_wood_pellet,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &assembly_machine_mk1,
+//             process: &wood_pellet_to_wood_brick,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &stone_furnace_burning_carbon,
+//             process: &wood_brick_to_coal,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &liquifier_mk1,
+//             process: &coal_to_carbon_dioxide,
+//         },
+//         Group {
+//             quantity: Some(1.0),
+//             processor: &ore_crusher_mk1,
+//             process: &coal_to_crushed_coal,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &stone_furnace_burning_carbon,
+//             process: &burn_crushed_coal_to_coke,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &liquifier_mk1,
+//             process: &coke_to_carbon,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &boiler_mk1_burning_carbon,
+//             process: &boiler_mk1_power,
+//         },
+//     ];
 
-    solve_and_print(
-        groups,
-        vec![
-            (Material::Carbon, 0.0),
-            (Material::CarbonDioxide, 0.0),
-            (Material::Coal, 0.0),
-            (Material::Coke, 0.0),
-            (Material::CrushedCoal, 0.0),
-            (Material::CrushedStone, 0.0),
-            (Material::Fiber, 0.0),
-            (Material::GreenAlgae, 0.0),
-            (Material::Hydrogen, 0.0),
-            // (Material::Joule, 0.0),
-            (Material::MineralizedWater, 0.0),
-            (Material::Oxygen, 0.0),
-            (Material::Slag, 0.0),
-            (Material::Water, 0.0),
-            (Material::WoodBrick, 0.0),
-            (Material::WoodPellet, 0.0),
-        ],
-    );
-}
+//     solve_and_print(
+//         groups,
+//         vec![
+//             (Material::Carbon, 0.0),
+//             (Material::CarbonDioxide, 0.0),
+//             (Material::Coal, 0.0),
+//             (Material::Coke, 0.0),
+//             (Material::CrushedCoal, 0.0),
+//             (Material::CrushedStone, 0.0),
+//             (Material::Fiber, 0.0),
+//             (Material::GreenAlgae, 0.0),
+//             (Material::Hydrogen, 0.0),
+//             // (Material::Joule, 0.0),
+//             (Material::MineralizedWater, 0.0),
+//             (Material::Oxygen, 0.0),
+//             (Material::Slag, 0.0),
+//             (Material::Water, 0.0),
+//             (Material::WoodBrick, 0.0),
+//             (Material::WoodPellet, 0.0),
+//         ],
+//     );
+// }
 
-fn advanced_early_energy() {
-    let groups = vec![
-        Group {
-            quantity: None,
-            processor: &offshore_pump,
-            process: &water_pumping,
-        },
-        Group {
-            quantity: None,
-            processor: &flare_stack,
-            process: &burn_oxygen,
-        },
-        Group {
-            quantity: None,
-            processor: &flare_stack,
-            process: &burn_hydrogen,
-        },
-        Group {
-            quantity: None,
-            processor: &electrolyser_mk1,
-            process: &dirt_water_electrolysis,
-        },
-        Group {
-            quantity: None,
-            processor: &ore_crusher_mk1,
-            process: &stone_crushing,
-        },
-        Group {
-            quantity: None,
-            processor: &liquifier_mk1,
-            process: &water_mineralization,
-        },
-        Group {
-            quantity: Some(10.0),
-            processor: &algae_farm_mk1,
-            process: &green_algae_growing,
-        },
-        Group {
-            quantity: None,
-            processor: &liquifier_mk1,
-            process: &green_algae_to_fiber,
-        },
-        Group {
-            quantity: None,
-            processor: &assembly_machine_mk1,
-            process: &fiber_to_wood_pellet,
-        },
-        Group {
-            quantity: None,
-            processor: &assembly_machine_mk1,
-            process: &wood_pellet_to_wood_brick,
-        },
-        Group {
-            quantity: None,
-            processor: &stone_furnace_burning_carbon,
-            process: &wood_brick_to_coal,
-        },
-        Group {
-            quantity: None,
-            processor: &liquifier_mk1,
-            process: &coal_to_carbon_dioxide,
-        },
-        Group {
-            quantity: None,
-            processor: &ore_crusher_mk1,
-            process: &coal_to_crushed_coal,
-        },
-        Group {
-            quantity: None,
-            processor: &hydro_plant_mk1,
-            process: &water_purification,
-        },
-        Group {
-            quantity: None,
-            processor: &clarifier,
-            process: &void_saline_water,
-        },
-        Group {
-            quantity: None,
-            processor: &liquifier_mk1,
-            process: &clean_coal_to_coke_and_sulfuric_waste_water,
-        },
-        Group {
-            quantity: None,
-            processor: &hydro_plant_mk1,
-            process: &sulfuric_waste_water_purification,
-        },
-        Group {
-            quantity: None,
-            processor: &liquifier_mk1,
-            process: &coke_to_carbon,
-        },
-        Group {
-            quantity: None,
-            processor: &boiler_mk1_burning_carbon,
-            process: &boiler_mk1_power,
-        },
-    ];
+// fn advanced_early_energy() {
+//     let groups = vec![
+//         Group {
+//             quantity: None,
+//             processor: &offshore_pump,
+//             process: &water_pumping,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &flare_stack,
+//             process: &burn_oxygen,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &flare_stack,
+//             process: &burn_hydrogen,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &electrolyser_mk1,
+//             process: &dirt_water_electrolysis,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &ore_crusher_mk1,
+//             process: &stone_crushing,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &liquifier_mk1,
+//             process: &water_mineralization,
+//         },
+//         Group {
+//             quantity: Some(10.0),
+//             processor: &algae_farm_mk1,
+//             process: &green_algae_growing,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &liquifier_mk1,
+//             process: &green_algae_to_fiber,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &assembly_machine_mk1,
+//             process: &fiber_to_wood_pellet,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &assembly_machine_mk1,
+//             process: &wood_pellet_to_wood_brick,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &stone_furnace_burning_carbon,
+//             process: &wood_brick_to_coal,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &liquifier_mk1,
+//             process: &coal_to_carbon_dioxide,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &ore_crusher_mk1,
+//             process: &coal_to_crushed_coal,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &hydro_plant_mk1,
+//             process: &water_purification,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &clarifier,
+//             process: &void_saline_water,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &liquifier_mk1,
+//             process: &clean_coal_to_coke_and_sulfuric_waste_water,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &hydro_plant_mk1,
+//             process: &sulfuric_waste_water_purification,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &liquifier_mk1,
+//             process: &coke_to_carbon,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &boiler_mk1_burning_carbon,
+//             process: &boiler_mk1_power,
+//         },
+//     ];
 
-    solve_and_print(
-        groups,
-        vec![
-            (Material::Carbon, 0.0),
-            (Material::CarbonDioxide, 0.0),
-            (Material::Coal, 0.0),
-            (Material::Coke, 0.0),
-            (Material::CrushedCoal, 0.0),
-            (Material::CrushedStone, 0.0),
-            (Material::Fiber, 0.0),
-            (Material::GreenAlgae, 0.0),
-            (Material::Hydrogen, 0.0),
-            // (Material::Joule, 0.0),
-            (Material::MineralizedWater, 0.0),
-            (Material::Oxygen, 0.0),
-            (Material::PurifiedWater, 0.0),
-            (Material::SalineWater, 0.0),
-            (Material::Slag, 0.0),
-            // (Material::Sulfur, 0.0),
-            (Material::SulfuricWasteWater, 0.0),
-            (Material::Water, 0.0),
-            (Material::WoodBrick, 0.0),
-            (Material::WoodPellet, 0.0),
-        ],
-    );
-}
+//     solve_and_print(
+//         groups,
+//         vec![
+//             (Material::Carbon, 0.0),
+//             (Material::CarbonDioxide, 0.0),
+//             (Material::Coal, 0.0),
+//             (Material::Coke, 0.0),
+//             (Material::CrushedCoal, 0.0),
+//             (Material::CrushedStone, 0.0),
+//             (Material::Fiber, 0.0),
+//             (Material::GreenAlgae, 0.0),
+//             (Material::Hydrogen, 0.0),
+//             // (Material::Joule, 0.0),
+//             (Material::MineralizedWater, 0.0),
+//             (Material::Oxygen, 0.0),
+//             (Material::PurifiedWater, 0.0),
+//             (Material::SalineWater, 0.0),
+//             (Material::Slag, 0.0),
+//             // (Material::Sulfur, 0.0),
+//             (Material::SulfuricWasteWater, 0.0),
+//             (Material::Water, 0.0),
+//             (Material::WoodBrick, 0.0),
+//             (Material::WoodPellet, 0.0),
+//         ],
+//     );
+// }
 
 #[derive(Debug)]
 struct FixedGroup<'a> {
@@ -443,41 +391,39 @@ fn accumulate_groups(groups: &Vec<FixedGroup>) -> std::collections::BTreeMap<Mat
     map
 }
 
-fn nodules() {
+// fn nodules() {
+//     // Setup.
+//     let groups = vec![
+//         Group {
+//             quantity: None,
+//             processor: &offshore_pump,
+//             process: &water_pumping,
+//         },
+//         Group {
+//             quantity: Some(1.0),
+//             processor: &seafloor_pump,
+//             process: &pump_viscous_mud_water,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &washing_plant_mk1,
+//             process: &wash_viscous_mud_water,
+//         },
+//         Group {
+//             quantity: None,
+//             processor: &washing_plant_mk1,
+//             process: &heavy_mud_water_to_nodule,
+//         },
+//     ];
 
+//     let fixed_materials = vec![
+//         (Material::Water, 0.0),
+//         (Material::HeavyMudWater, 0.0),
+//         (Material::ViscousMudWater, 0.0),
+//     ];
 
-    // Setup.
-    let groups = vec![
-        Group {
-            quantity: None,
-            processor: &offshore_pump,
-            process: &water_pumping,
-        },
-        Group {
-            quantity: Some(1.0),
-            processor: &seafloor_pump,
-            process: &pump_viscous_mud_water,
-        },
-        Group {
-            quantity: None,
-            processor: &washing_plant_mk1,
-            process: &wash_viscous_mud_water,
-        },
-        Group {
-            quantity: None,
-            processor: &washing_plant_mk1,
-            process: &heavy_mud_water_to_nodule,
-        },
-    ];
-
-    let fixed_materials = vec![
-        (Material::Water, 0.0),
-        (Material::HeavyMudWater, 0.0),
-        (Material::ViscousMudWater, 0.0),
-    ];
-
-    solve_and_print(groups, fixed_materials);
-}
+//     solve_and_print(groups, fixed_materials);
+// }
 
 struct Group<'a> {
     quantity: Option<f64>,

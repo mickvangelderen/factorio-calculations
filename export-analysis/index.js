@@ -10,8 +10,16 @@ function isNumber(value) {
     return typeof value === "number";
 }
 
+function isObject(value) {
+    return typeof value === "object" && value !== null;
+}
+
 function printFloat(value) {
     return Number.parseFloat(value).toPrecision(21);
+}
+
+function printOptionFloat(value) {
+    return isNumber(value) ? `Some(${printFloat(value)})` : 'None';
 }
 
 const items = read_json_file('items.json');
@@ -20,35 +28,58 @@ const entities = read_json_file('entities.json');
 const recipes = read_json_file('recipes.json');
 
 // https://lua-api.factorio.com/0.16.51/LuaItemPrototype.html
-const items_rust = Object.values(items).map(item => {
+const items_rust = 'use super::model::*;\n' + Object.values(items).map(item => {
     const { name, fuel_value } = item;
     return `
 static ${constant_case(name)}: Item = Item {
     name: "${name}",
     fuel_value: ${printFloat(fuel_value)},
-}
+};
 `;
 }).join('');
 
 // https://lua-api.factorio.com/0.16.51/LuaFluidPrototype.html
-const fluids_rust = Object.values(fluids).map(fluid => {
+const fluids_rust = 'use super::model::*;\n' + Object.values(fluids).map(fluid => {
     const { name, fuel_value } = fluid;
     return `
 static ${constant_case(name)}: Fluid = Fluid {
     name: "${name}",
     fuel_value: ${printFloat(fuel_value)},
-}
+};
 `;
 }).join('');
 
+function entity_energy_to_rust(entity) {
+    const { energy_usage, burner_prototype: burner, electric_energy_source_prototype: electric } = entity;
+
+    if (isObject(burner) && !isObject(electric)) {
+        return `EntityEnergy::Fueled {
+        usage: ${isNumber(entity.energy_usage) ? printFloat(entity.energy_usage) : printFloat(entity.max_energy_usage)},
+        effectivity: ${printFloat(burner.effectivity)},
+    }`;
+    }
+    if (!isObject(burner) && isObject(electric)) {
+        return `EntityEnergy::Electric {
+        usage: ${isNumber(entity.energy_usage) ? printFloat(entity.energy_usage) : printFloat(entity.max_energy_usage)},
+        drain: ${printFloat(electric.drain)},
+    }`;
+    }
+    if (!isObject(burner) && !isObject(electric)) {
+        return `EntityEnergy::None`;
+    }
+    console.error(entity);
+    throw new Error('Entity with both burner and electric energy sources.');
+}
+
 // https://lua-api.factorio.com/0.16.51/LuaEntityPrototype.html
-const entities_rust = Object.values(entities).map(entity => {
+const entities_rust = 'use super::model::*;\n' + Object.values(entities).map(entity => {
     const { name, crafting_speed } = entity;
     return `
 static ${constant_case(name)}: Entity = Entity {
     name: "${name}",
-    crafting_speed: ${isNumber(crafting_speed) ? `Some(${printFloat(crafting_speed)})` : 'None'},
-}
+    crafting_speed: ${printOptionFloat(crafting_speed)},
+    energy: ${entity_energy_to_rust(entity)},
+};
 `;
 }).join('');
 
@@ -64,7 +95,7 @@ function ingredient_to_rust(ingredient) {
                 return `
         Ingredient::Item {
             name: "${name}",
-            amount: ${amount},
+            amount: ${printFloat(amount)},
         },`;
         }
         if (type == "fluid") {
@@ -73,15 +104,15 @@ function ingredient_to_rust(ingredient) {
                 return `
         Ingredient::FluidTemp {
             name: "${name}",
-            amount: ${amount},
-            minimum_temperature: ${minimum_temperature},
+            amount: ${printFloat(amount)},
+            minimum_temperature: ${minimum_temperature < 0 ? 0 : minimum_temperature},
             maximum_temperature: ${maximum_temperature},
         },`;
             } else {
                 return `
         Ingredient::Fluid {
             name: "${name}",
-            amount: ${amount},
+            amount: ${printFloat(amount)},
         },`;
             }
         }
@@ -104,7 +135,7 @@ function product_to_rust(product) {
             return `
         Product::Item {
             name: "${name}",
-            amount: ${amount},
+            amount: ${printFloat(amount)},
         },`;
         }
         const { amount_min, amount_max, probability } = product;
@@ -112,9 +143,9 @@ function product_to_rust(product) {
             return `
         Product::ItemChance {
             name: "${name}",
-            amount_min: ${amount_min},
-            amount_max: ${amount_max},
-            probability: ${probability},
+            amount_min: ${printFloat(amount_min)},
+            amount_max: ${printFloat(amount_max)},
+            probability: ${printFloat(probability)},
         },`;
         }
     } else if (product.type === "fluid") {
@@ -125,14 +156,14 @@ function product_to_rust(product) {
                 return `
         Product::FluidTemp {
             name: "${name}",
-            amount: ${amount},
+            amount: ${printFloat(amount)},
             temperature: ${temperature},
         },`;
             } else {
                 return `
         Product::Fluid {
             name: "${name}",
-            amount: ${amount},
+            amount: ${printFloat(amount)},
         },`;
             }
         }
@@ -143,18 +174,18 @@ function product_to_rust(product) {
                 return `
         Product::FluidChanceTemp {
             name: "${name}",
-            amount_min: ${amount_min},
-            amount_max: ${amount_max},
-            probability: ${probability},
+            amount_min: ${printFloat(amount_min)},
+            amount_max: ${printFloat(amount_max)},
+            probability: ${printFloat(probability)},
             temperature: ${temperature},
         },`;
             } else {
                 return `
         Product::FluidChance {
             name: "${name}",
-            amount_min: ${amount_min},
-            amount_max: ${amount_max},
-            probability: ${probability},
+            amount_min: ${printFloat(amount_min)},
+            amount_max: ${printFloat(amount_max)},
+            probability: ${printFloat(probability)},
         },`;
             }
         }
@@ -163,20 +194,20 @@ function product_to_rust(product) {
     throw new Error("Invalid product.");
 }
 
-const recipes_rust = Object.values(recipes).map(recipe => {
+const recipes_rust = 'use super::model::*;\n' + Object.values(recipes).map(recipe => {
     return `
 static ${constant_case(recipe.name)}: Recipe = Recipe {
     name: "${recipe.name}",
-    ingredients: [${recipe.ingredients.map(ingredient_to_rust).join('')}
+    ingredients: &[${recipe.ingredients.map(ingredient_to_rust).join('')}
     ],
-    products: [${recipe.products.map(product_to_rust).join('')}
+    products: &[${recipe.products.map(product_to_rust).join('')}
     ],
-    time: ${recipe.energy_required}
+    time: ${printFloat(recipe.energy)}
 };
 `;
 }).join('');
 
-fs.writeFileSync('items.rs', items_rust);
-fs.writeFileSync('fluids.rs', fluids_rust);
-fs.writeFileSync('entities.rs', entities_rust);
-fs.writeFileSync('recipes.rs', recipes_rust);
+fs.writeFileSync('../src/items.rs', items_rust);
+fs.writeFileSync('../src/fluids.rs', fluids_rust);
+fs.writeFileSync('../src/entities.rs', entities_rust);
+fs.writeFileSync('../src/recipes.rs', recipes_rust);
