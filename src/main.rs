@@ -1,479 +1,104 @@
 #![allow(unused)]
 #![allow(non_upper_case_globals)]
 
-extern crate rulinalg;
+mod items;
+mod entities;
+mod recipes;
 
 use rulinalg::matrix::*;
 use rulinalg::vector::*;
-
-mod model;
-mod items;
-mod fluids;
-mod entities;
-mod recipes;
-// mod processors;
-// mod processes;
-
-#[derive(Debug)]
-pub struct Process {
-    name: &'static str,
-    ingredients: &'static [Ingredient],
-    time: f64,
-}
-
-#[derive(Debug)]
-pub struct Processor {
-    name: &'static str,
-    speed: f64,
-    energy_consumption: f64,
-    energy_source: Material,
-    drain: f64,
-}
+use items::Item;
+use entities::Entity;
+use recipes::Recipe;
+use std::collections::HashMap;
 
 fn main() {
-    easy_early_energy();
-    // early_energy();
-    // advanced_early_energy();
-    // nodules();
+    reinforced_iron_plates();
 }
 
-// fn easy_early_energy() {
-//     // Do things.
-//     let groups = vec![
-//         Group {
-//             quantity: None,
-//             processor: &offshore_pump,
-//             process: &water_pumping,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &flare_stack,
-//             process: &burn_oxygen,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &flare_stack,
-//             process: &burn_hydrogen,
-//         },
-//         Group {
-//             quantity: Some(1.0),
-//             processor: &electrolyser_mk1,
-//             process: &dirt_water_electrolysis,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &ore_crusher_mk1,
-//             process: &stone_crushing,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &liquifier_mk1,
-//             process: &water_mineralization,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &algae_farm_mk1,
-//             process: &green_algae_growing,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &liquifier_mk1,
-//             process: &green_algae_to_fiber,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &assembly_machine_mk1,
-//             process: &fiber_to_wood_pellet,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &liquifier_mk1,
-//             process: &wood_pellet_to_carbon_dioxide,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &boiler_mk1_burning_wood_pellet,
-//             process: &boiler_mk1_power,
-//         },
-//     ];
-
-//     solve_and_print(
-//         groups,
-//         vec![
-//             (Material::CarbonDioxide, 0.0),
-//             (Material::CrushedStone, 0.0),
-//             (Material::Fiber, 0.0),
-//             (Material::GreenAlgae, 0.0),
-//             (Material::Hydrogen, 0.0),
-//             // (Material::Joule, 0.0),
-//             (Material::MineralizedWater, 0.0),
-//             (Material::Oxygen, 0.0),
-//             (Material::Slag, 0.0),
-//             (Material::Water, 0.0),
-//             (Material::WoodPellet, 0.0),
-//         ],
-//     );
-// }
-
-// fn early_energy() {
-//     let groups = vec![
-//         Group {
-//             quantity: None,
-//             processor: &offshore_pump,
-//             process: &water_pumping,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &flare_stack,
-//             process: &burn_oxygen,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &flare_stack,
-//             process: &burn_hydrogen,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &electrolyser_mk1,
-//             process: &dirt_water_electrolysis,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &ore_crusher_mk1,
-//             process: &stone_crushing,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &liquifier_mk1,
-//             process: &water_mineralization,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &algae_farm_mk1,
-//             process: &green_algae_growing,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &liquifier_mk1,
-//             process: &green_algae_to_fiber,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &assembly_machine_mk1,
-//             process: &fiber_to_wood_pellet,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &assembly_machine_mk1,
-//             process: &wood_pellet_to_wood_brick,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &stone_furnace_burning_carbon,
-//             process: &wood_brick_to_coal,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &liquifier_mk1,
-//             process: &coal_to_carbon_dioxide,
-//         },
-//         Group {
-//             quantity: Some(1.0),
-//             processor: &ore_crusher_mk1,
-//             process: &coal_to_crushed_coal,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &stone_furnace_burning_carbon,
-//             process: &burn_crushed_coal_to_coke,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &liquifier_mk1,
-//             process: &coke_to_carbon,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &boiler_mk1_burning_carbon,
-//             process: &boiler_mk1_power,
-//         },
-//     ];
-
-//     solve_and_print(
-//         groups,
-//         vec![
-//             (Material::Carbon, 0.0),
-//             (Material::CarbonDioxide, 0.0),
-//             (Material::Coal, 0.0),
-//             (Material::Coke, 0.0),
-//             (Material::CrushedCoal, 0.0),
-//             (Material::CrushedStone, 0.0),
-//             (Material::Fiber, 0.0),
-//             (Material::GreenAlgae, 0.0),
-//             (Material::Hydrogen, 0.0),
-//             // (Material::Joule, 0.0),
-//             (Material::MineralizedWater, 0.0),
-//             (Material::Oxygen, 0.0),
-//             (Material::Slag, 0.0),
-//             (Material::Water, 0.0),
-//             (Material::WoodBrick, 0.0),
-//             (Material::WoodPellet, 0.0),
-//         ],
-//     );
-// }
-
-// fn advanced_early_energy() {
-//     let groups = vec![
-//         Group {
-//             quantity: None,
-//             processor: &offshore_pump,
-//             process: &water_pumping,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &flare_stack,
-//             process: &burn_oxygen,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &flare_stack,
-//             process: &burn_hydrogen,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &electrolyser_mk1,
-//             process: &dirt_water_electrolysis,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &ore_crusher_mk1,
-//             process: &stone_crushing,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &liquifier_mk1,
-//             process: &water_mineralization,
-//         },
-//         Group {
-//             quantity: Some(10.0),
-//             processor: &algae_farm_mk1,
-//             process: &green_algae_growing,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &liquifier_mk1,
-//             process: &green_algae_to_fiber,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &assembly_machine_mk1,
-//             process: &fiber_to_wood_pellet,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &assembly_machine_mk1,
-//             process: &wood_pellet_to_wood_brick,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &stone_furnace_burning_carbon,
-//             process: &wood_brick_to_coal,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &liquifier_mk1,
-//             process: &coal_to_carbon_dioxide,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &ore_crusher_mk1,
-//             process: &coal_to_crushed_coal,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &hydro_plant_mk1,
-//             process: &water_purification,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &clarifier,
-//             process: &void_saline_water,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &liquifier_mk1,
-//             process: &clean_coal_to_coke_and_sulfuric_waste_water,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &hydro_plant_mk1,
-//             process: &sulfuric_waste_water_purification,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &liquifier_mk1,
-//             process: &coke_to_carbon,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &boiler_mk1_burning_carbon,
-//             process: &boiler_mk1_power,
-//         },
-//     ];
-
-//     solve_and_print(
-//         groups,
-//         vec![
-//             (Material::Carbon, 0.0),
-//             (Material::CarbonDioxide, 0.0),
-//             (Material::Coal, 0.0),
-//             (Material::Coke, 0.0),
-//             (Material::CrushedCoal, 0.0),
-//             (Material::CrushedStone, 0.0),
-//             (Material::Fiber, 0.0),
-//             (Material::GreenAlgae, 0.0),
-//             (Material::Hydrogen, 0.0),
-//             // (Material::Joule, 0.0),
-//             (Material::MineralizedWater, 0.0),
-//             (Material::Oxygen, 0.0),
-//             (Material::PurifiedWater, 0.0),
-//             (Material::SalineWater, 0.0),
-//             (Material::Slag, 0.0),
-//             // (Material::Sulfur, 0.0),
-//             (Material::SulfuricWasteWater, 0.0),
-//             (Material::Water, 0.0),
-//             (Material::WoodBrick, 0.0),
-//             (Material::WoodPellet, 0.0),
-//         ],
-//     );
-// }
+struct Group<'a> {
+    quantity: Option<f64>,
+    processor: &'a entities::Entity,
+    process: &'a recipes::Recipe,
+}
 
 #[derive(Debug)]
 struct FixedGroup<'a> {
     quantity: f64,
-    processor: &'a Processor,
-    process: &'a Process,
+    processor: &'a entities::Entity,
+    process: &'a recipes::Recipe,
 }
 
-fn accumulate_groups(groups: &Vec<FixedGroup>) -> std::collections::BTreeMap<Material, (f64, f64)> {
-    let mut map = std::collections::BTreeMap::<Material, (f64, f64)>::new();
-
-    for group in groups {
-        let quantity = group.quantity;
-        let processor = group.processor;
-        let process = group.process;
-
-        for ingredient in process.ingredients.iter() {
-            let accumulator = map.entry(ingredient.material).or_insert((0.0, 0.0));
-            let quantity_per_second = (ingredient.quantity / process.time) *
-                (quantity * processor.speed);
-            if quantity_per_second >= 0.0 {
-                (*accumulator).0 += quantity_per_second;
-            } else {
-                (*accumulator).1 += quantity_per_second;
-            }
-        }
-
-        assert!(processor.energy_source.joules() > 0.0);
-
-        let quantity_per_second = quantity * -(processor.energy_consumption + processor.drain) /
-            processor.energy_source.joules();
-
-        let accumulator = map.entry(processor.energy_source).or_insert((0.0, 0.0));
-
-        if quantity_per_second >= 0.0 {
-            (*accumulator).0 += quantity_per_second;
-        } else {
-            (*accumulator).1 += quantity_per_second;
-        }
-    }
-
-    map
+struct FixedItem {
+    item: &'static items::Item,
+    quantity_per_minute: f64,
 }
 
-// fn nodules() {
-//     // Setup.
-//     let groups = vec![
-//         Group {
-//             quantity: None,
-//             processor: &offshore_pump,
-//             process: &water_pumping,
-//         },
-//         Group {
-//             quantity: Some(1.0),
-//             processor: &seafloor_pump,
-//             process: &pump_viscous_mud_water,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &washing_plant_mk1,
-//             process: &wash_viscous_mud_water,
-//         },
-//         Group {
-//             quantity: None,
-//             processor: &washing_plant_mk1,
-//             process: &heavy_mud_water_to_nodule,
-//         },
-//     ];
+fn reinforced_iron_plates() {
+    // Setup.
+    let groups = &[
+        Group {
+            quantity: None,
+            processor: &entities::CONSTRUCTOR,
+            process: &recipes::IRON_ROD,
+        },
+    ];
 
-//     let fixed_materials = vec![
-//         (Material::Water, 0.0),
-//         (Material::HeavyMudWater, 0.0),
-//         (Material::ViscousMudWater, 0.0),
-//     ];
+    let fixed_items = &[
+        FixedItem { item: &items::IRON_INGOT, quantity_per_minute: -30.0 }
+    ];
 
-//     solve_and_print(groups, fixed_materials);
-// }
-
-struct Group<'a> {
-    quantity: Option<f64>,
-    processor: &'a Processor,
-    process: &'a Process,
+    solve_and_print(groups, fixed_items);
 }
 
-fn solve_and_print(groups: Vec<Group>, fixed_materials: Vec<(Material, f64)>) {
+fn solve_and_print(groups: &[Group], fixed_items: &[FixedItem]) {
     let fixed_processes: Vec<(usize, f64)> = groups
         .iter()
         .enumerate()
         .filter_map(|(i, g)| g.quantity.map(|q| (i, q)))
         .collect();
 
-    let mut material_to_row = std::collections::BTreeMap::<Material, usize>::new();
+    let item_to_row = {
+        let mut item_to_row: HashMap<*const Item, usize> = HashMap::new();
+        let mut row_count: usize = 0;
 
-    for group in &groups {
-        for ingredient in group.process.ingredients {
-            material_to_row.entry(ingredient.material).or_insert(0);
+        for group in groups.iter() {
+            for ingredient in group.process.ingredients.iter() {
+                item_to_row.entry(ingredient.item).or_insert(row_count);
+                row_count += 1;
+            }
+
+            for product in group.process.products.iter() {
+                item_to_row.entry(product.item).or_insert(row_count);
+                row_count += 1;
+            }
         }
-        material_to_row
-            .entry(group.processor.energy_source)
-            .or_insert(0);
-    }
 
-    for (index, (material, row)) in material_to_row.iter_mut().enumerate() {
-        *row = index
-    }
+        item_to_row
+    };
 
     // Recipe matrix.
     #[allow(non_snake_case)]
-    let mut R: Matrix<f64> = Matrix::zeros(material_to_row.len(), groups.len());
+    let mut R: Matrix<f64> = Matrix::zeros(item_to_row.len(), groups.len());
 
     for (col, group) in groups.iter().enumerate() {
-        for ingredient in group.process.ingredients {
-            let row = *material_to_row.get(&ingredient.material).unwrap();
-            // Add assign in case a recipe contains the same ingredient
-            // multiple times, even if it should have been simplified.
-            R[[row, col]] += group.processor.speed * ingredient.quantity / group.process.time;
+        let Group { process, processor, quantity } = group;
+        let crafts_per_second = processor.crafting_speed / process.time;
+        for ingredient in process.ingredients {
+            let row = *item_to_row.get(&(ingredient.item as *const _)).unwrap();
+            R[[row, col]] -= crafts_per_second * ingredient.quantity;
         }
-        let row = *material_to_row.get(&group.processor.energy_source).unwrap();
-        // Add assign because a value can have been written by one of the normal ingredients.
-        R[[row, col]] += -(group.processor.energy_consumption + group.processor.drain)/group.processor.energy_source.joules();
+        for product in process.products {
+            let row = *item_to_row.get(&(product.item as *const _)).unwrap();
+            R[[row, col]] += crafts_per_second * product.quantity;
+        }
     }
 
     #[allow(non_snake_case)]
-    let I: Matrix<f64> = -Matrix::identity(material_to_row.len());
+    let I: Matrix<f64> = -Matrix::identity(item_to_row.len());
 
     #[allow(non_snake_case)]
-    let Rv: Vector<f64> = Vector::zeros(material_to_row.len());
+    let Rv: Vector<f64> = Vector::zeros(item_to_row.len());
 
     // Process constraint matrices.
 
@@ -481,7 +106,7 @@ fn solve_and_print(groups: Vec<Group>, fixed_materials: Vec<(Material, f64)>) {
     let mut P: Matrix<f64> = Matrix::zeros(fixed_processes.len(), groups.len());
 
     #[allow(non_snake_case)]
-    let P0: Matrix<f64> = Matrix::zeros(fixed_processes.len(), material_to_row.len());
+    let P0: Matrix<f64> = Matrix::zeros(fixed_processes.len(), item_to_row.len());
 
     #[allow(non_snake_case)]
     let mut Pv: Vector<f64> = Vector::zeros(fixed_processes.len());
@@ -491,24 +116,24 @@ fn solve_and_print(groups: Vec<Group>, fixed_materials: Vec<(Material, f64)>) {
         Pv[row] = q;
     }
 
-    // Material constraint matrices.
+    // Item constraint matrices.
 
     #[allow(non_snake_case)]
-    let M0: Matrix<f64> = Matrix::zeros(fixed_materials.len(), groups.len());
+    let M0: Matrix<f64> = Matrix::zeros(fixed_items.len(), groups.len());
 
     #[allow(non_snake_case)]
-    let mut M: Matrix<f64> = Matrix::zeros(fixed_materials.len(), material_to_row.len());
+    let mut M: Matrix<f64> = Matrix::zeros(fixed_items.len(), item_to_row.len());
 
     #[allow(non_snake_case)]
-    let mut Mv: Vector<f64> = Vector::zeros(fixed_materials.len());
+    let mut Mv: Vector<f64> = Vector::zeros(fixed_items.len());
 
-    for (row, &(mat, q)) in fixed_materials.iter().enumerate() {
-        let col = *material_to_row.get(&mat).expect(&format!(
+    for (row, fixed) in fixed_items.iter().enumerate() {
+        let col = *item_to_row.get(&(fixed.item as *const _)).expect(&format!(
             "{:?} does not participate in any of the recipes or as fuel",
-            mat
+            fixed.item
         ));
         M[[row, col]] = 1.0;
-        Mv[row] = q;
+        Mv[row] = fixed.quantity_per_minute / 60.0;
     }
 
     let a: Matrix<f64> = (&R.hcat(&I)).vcat(&P.hcat(&P0)).vcat(&M0.hcat(&M));
@@ -532,8 +157,9 @@ fn solve_and_print(groups: Vec<Group>, fixed_materials: Vec<(Material, f64)>) {
 
     println!();
     println!("Balance");
-    for (i, (material, _)) in material_to_row.iter().enumerate() {
-        println!("{:>12.2} {:?}/s", x[groups.len() + i], material);
+    for (i, (&item_ptr, _)) in item_to_row.iter().enumerate() {
+        let item: &'static Item = unsafe { &*item_ptr };
+        println!("{:>12.2} {}/m", x[groups.len() + i]*60.0, item.name);
     }
 
     let groups: Vec<FixedGroup> = groups.iter().enumerate().map(|(i, group)| {
@@ -545,11 +171,34 @@ fn solve_and_print(groups: Vec<Group>, fixed_materials: Vec<(Material, f64)>) {
     }).collect();
 
     println!();
-    println!("  Production  Consumption");
-    let prod_cons = accumulate_groups(&groups);
-    for (mat, (prod, cons)) in prod_cons.into_iter() {
-        println!("{:>12.2} {:>12.2} {:?}/m", prod*60.0, cons*60.0, mat);
+    println!(" Consumption  Production");
+    let cons_prod = calculate_consumption_production(&groups);
+    for (item_ptr, (cons, prod)) in cons_prod.into_iter() {
+        let item: &'static Item = unsafe { &*item_ptr };
+        println!("{:>12.2} {:>12.2} {}/m", cons*60.0, prod*60.0, item.name);
     }
 
     println!();
+}
+
+fn calculate_consumption_production(groups: &[FixedGroup]) -> HashMap<*const Item, (f64, f64)> {
+    let mut map: HashMap<*const Item, (f64, f64)> = HashMap::new();
+
+    for group in groups {
+        let FixedGroup { processor, process, quantity } = group;
+
+        let crafts_per_second = quantity * processor.crafting_speed / process.time;
+
+        for ingredient in process.ingredients.iter() {
+            let accumulator = map.entry(ingredient.item).or_insert((0.0, 0.0));
+            (*accumulator).0 += crafts_per_second * ingredient.quantity;
+        }
+
+        for product in process.products.iter() {
+            let accumulator = map.entry(product.item).or_insert((0.0, 0.0));
+            (*accumulator).1 += crafts_per_second * product.quantity;
+        }
+    }
+
+    map
 }
