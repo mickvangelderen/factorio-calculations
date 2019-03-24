@@ -7,45 +7,57 @@ mod recipes;
 
 use rulinalg::matrix::*;
 use rulinalg::vector::*;
-use items::Item;
-use entities::Entity;
-use recipes::Recipe;
+use items::*;
+use entities::*;
+use recipes::*;
 use std::collections::HashMap;
 
 fn main() {
     reinforced_iron_plates();
 }
 
+#[derive(Debug)]
 struct Group<'a> {
     quantity: Option<f64>,
-    processor: &'a entities::Entity,
-    process: &'a recipes::Recipe,
+    processor: &'a Entity,
+    process: &'a Recipe,
 }
 
 #[derive(Debug)]
 struct FixedGroup<'a> {
     quantity: f64,
-    processor: &'a entities::Entity,
-    process: &'a recipes::Recipe,
+    processor: &'a Entity,
+    process: &'a Recipe,
 }
 
+#[derive(Debug)]
 struct FixedItem {
-    item: &'static items::Item,
+    item: &'static Item,
     quantity_per_minute: f64,
 }
 
 fn reinforced_iron_plates() {
-    // Setup.
     let groups = &[
         Group {
             quantity: None,
-            processor: &entities::CONSTRUCTOR,
-            process: &recipes::IRON_ROD,
+            processor: &CONSTRUCTOR,
+            process: &CRAFT_IRON_ROD,
         },
+        Group {
+            quantity: None,
+            processor: &CONSTRUCTOR,
+            process: &CRAFT_SCREW,
+        },
+        Group {
+            quantity: Some(3.0),
+            processor: &ASSEMBLER,
+            process: &ASSEMBLE_REINFORCED_IRON_PLATE,
+        }
     ];
 
     let fixed_items = &[
-        FixedItem { item: &items::IRON_INGOT, quantity_per_minute: -30.0 }
+        FixedItem { item: &IRON_ROD, quantity_per_minute: 0.0 },
+        FixedItem { item: &SCREW, quantity_per_minute: 0.0 },
     ];
 
     solve_and_print(groups, fixed_items);
@@ -60,17 +72,16 @@ fn solve_and_print(groups: &[Group], fixed_items: &[FixedItem]) {
 
     let item_to_row = {
         let mut item_to_row: HashMap<*const Item, usize> = HashMap::new();
-        let mut row_count: usize = 0;
 
         for group in groups.iter() {
             for ingredient in group.process.ingredients.iter() {
-                item_to_row.entry(ingredient.item).or_insert(row_count);
-                row_count += 1;
+                let row = item_to_row.len();
+                item_to_row.entry(ingredient.item).or_insert(row);
             }
 
             for product in group.process.products.iter() {
-                item_to_row.entry(product.item).or_insert(row_count);
-                row_count += 1;
+                let row = item_to_row.len();
+                item_to_row.entry(product.item).or_insert(row);
             }
         }
 
@@ -81,6 +92,10 @@ fn solve_and_print(groups: &[Group], fixed_items: &[FixedItem]) {
     #[allow(non_snake_case)]
     let mut R: Matrix<f64> = Matrix::zeros(item_to_row.len(), groups.len());
 
+    println!("{:#?}", groups);
+    println!("{:#?}", fixed_processes);
+    println!("{:#?}", item_to_row);
+    println!("{:#?}", R);
     for (col, group) in groups.iter().enumerate() {
         let Group { process, processor, quantity } = group;
         let crafts_per_second = processor.crafting_speed / process.time;

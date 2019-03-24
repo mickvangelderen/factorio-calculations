@@ -1,15 +1,37 @@
-use crate::items;
+use crate::items::*;
 
 #[derive(Debug)]
 pub struct Ingredient {
-    pub item: &'static items::Item,
+    pub item: &'static Item,
     pub quantity: f64,
+}
+
+macro_rules! ingredients {
+    [$(($item: expr, $qty: expr),)*] => {
+        &[$(
+            Ingredient {
+                item: &$item,
+                quantity: $qty,
+            },
+        )*]
+    }
 }
 
 #[derive(Debug)]
 pub struct Product {
-    pub item: &'static items::Item,
+    pub item: &'static Item,
     pub quantity: f64,
+}
+
+macro_rules! products {
+    [$(($item: expr, $qty: expr),)*] => {
+        &[$(
+            Product {
+                item: &$item,
+                quantity: $qty,
+            },
+        )*]
+    }
 }
 
 #[derive(Debug)]
@@ -20,36 +42,47 @@ pub struct Recipe {
     pub time: f64,
 }
 
-pub static IRON_INGOT: Recipe = Recipe {
-    name: "Iron Ingot",
-    ingredients: &[
-        Ingredient {
-            item: &items::IRON_ORE,
-            quantity: 30.0,
-        },
+pub static SMELT_IRON_INGOT: Recipe = Recipe {
+    name: "Smelt Iron Ingot",
+    ingredients: ingredients![
+        (IRON_ORE, 30.0),
     ],
-    products: &[
-        Product {
-            item: &items::IRON_INGOT,
-            quantity: 30.0,
-        },
+    products: products![
+        (IRON_INGOT, 30.0),
     ],
     time: 60.0
 };
 
-pub static IRON_ROD: Recipe = Recipe {
-    name: "Iron Rod",
-    ingredients: &[
-        Ingredient {
-            item: &items::IRON_INGOT,
-            quantity: 15.0,
-        },
+pub static CRAFT_IRON_ROD: Recipe = Recipe {
+    name: "Craft Iron Rod",
+    ingredients: ingredients![
+        (IRON_INGOT, 15.0),
     ],
-    products: &[
-        Product {
-            item: &items::IRON_ROD,
-            quantity: 15.0,
-        },
+    products: products![
+        (IRON_ROD, 15.0),
     ],
     time: 60.0
+};
+
+pub static CRAFT_SCREW: Recipe = Recipe {
+    name: "Craft Screw",
+    ingredients: ingredients![
+        (IRON_ROD, 15.0),
+    ],
+    products: products![
+        (SCREW, 90.0),
+    ],
+    time: 60.0
+};
+
+pub static ASSEMBLE_REINFORCED_IRON_PLATE: Recipe = Recipe {
+    name: "Assemble Reinforced Iron Plate",
+    ingredients: ingredients![
+        (IRON_PLATE, 20.0),
+        (SCREW, 120.0),
+    ],
+    products: products![
+        (REINFORCED_IRON_PLATE, 5.0),
+    ],
+    time: 60.0,
 };
