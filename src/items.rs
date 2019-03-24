@@ -28,4 +28,9 @@ impl_items!{
     (ROTOR, "Rotor"),
     (STATOR, "Stator"),
     (MOTOR, "Motor"),
+    (COAL_ORE, "Coal Ore"),
+    (STEEL_INGOT, "Steel Ingot"),
+    (STEEL_PIPE, "Steel Pipe"),
+    (STEEL_BEAM, "Steel Beam"),
+    (REINFORCED_STEEL_BEAM, "Reinforced Steel Beam"),
 }

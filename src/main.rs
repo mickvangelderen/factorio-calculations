@@ -13,7 +13,20 @@ use recipes::*;
 use std::collections::HashMap;
 
 fn main() {
-    reinforced_iron_plates();
+    println!("## Iron Plates\n");
+    ingot_to_reinforced_iron_plates();
+
+    println!("## Modular Frames\n");
+    ingot_to_modular_frames();
+
+    println!("## Rotors\n");
+    rotors();
+
+    println!("## Stators\n");
+    stators();
+
+    println!("## Motors\n");
+    motors();
 }
 
 #[derive(Debug)]
@@ -36,12 +49,17 @@ struct FixedItem {
     quantity_per_minute: f64,
 }
 
-fn reinforced_iron_plates() {
+fn ingot_to_reinforced_iron_plates() {
     let groups = &[
         Group {
             quantity: None,
             processor: &CONSTRUCTOR,
             process: &CRAFT_IRON_ROD,
+        },
+        Group {
+            quantity: None,
+            processor: &CONSTRUCTOR,
+            process: &CRAFT_IRON_PLATE,
         },
         Group {
             quantity: None,
@@ -57,7 +75,173 @@ fn reinforced_iron_plates() {
 
     let fixed_items = &[
         FixedItem { item: &IRON_ROD, quantity_per_minute: 0.0 },
+        FixedItem { item: &IRON_PLATE, quantity_per_minute: 0.0 },
         FixedItem { item: &SCREW, quantity_per_minute: 0.0 },
+    ];
+
+    solve_and_print(groups, fixed_items);
+}
+
+fn ingot_to_modular_frames() {
+    let groups = &[
+        Group {
+            quantity: None,
+            processor: &CONSTRUCTOR,
+            process: &CRAFT_IRON_ROD,
+        },
+        Group {
+            quantity: None,
+            processor: &CONSTRUCTOR,
+            process: &CRAFT_IRON_PLATE,
+        },
+        Group {
+            quantity: None,
+            processor: &CONSTRUCTOR,
+            process: &CRAFT_SCREW,
+        },
+        Group {
+            quantity: None,
+            processor: &ASSEMBLER,
+            process: &ASSEMBLE_REINFORCED_IRON_PLATE,
+        },
+        Group {
+            quantity: Some(5.0),
+            processor: &ASSEMBLER,
+            process: &ASSEMBLE_MODULAR_FRAME,
+        }
+    ];
+
+    let fixed_items = &[
+        FixedItem { item: &IRON_ROD, quantity_per_minute: 0.0 },
+        FixedItem { item: &IRON_PLATE, quantity_per_minute: 0.0 },
+        FixedItem { item: &SCREW, quantity_per_minute: 0.0 },
+        FixedItem { item: &REINFORCED_IRON_PLATE, quantity_per_minute: 0.0 },
+    ];
+
+    solve_and_print(groups, fixed_items);
+}
+
+fn reinforced_iron_plate_to_modular_frames() {
+    let groups = &[
+        Group {
+            quantity: None,
+            processor: &CONSTRUCTOR,
+            process: &CRAFT_IRON_ROD,
+        },
+        Group {
+            quantity: Some(5.0),
+            processor: &ASSEMBLER,
+            process: &ASSEMBLE_MODULAR_FRAME,
+        }
+    ];
+
+    let fixed_items = &[
+        FixedItem { item: &IRON_ROD, quantity_per_minute: 0.0 },
+    ];
+
+    solve_and_print(groups, fixed_items);
+}
+
+fn rotors() {
+    let groups = &[
+        Group {
+            quantity: None,
+            processor: &CONSTRUCTOR,
+            process: &CRAFT_IRON_ROD,
+        },
+        Group {
+            quantity: None,
+            processor: &CONSTRUCTOR,
+            process: &CRAFT_SCREW,
+        },
+        Group {
+            quantity: Some(1.0),
+            processor: &ASSEMBLER,
+            process: &ASSEMBLE_ROTOR,
+        }
+    ];
+
+    let fixed_items = &[
+        FixedItem { item: &IRON_ROD, quantity_per_minute: 0.0 },
+        FixedItem { item: &SCREW, quantity_per_minute: 0.0 },
+    ];
+
+    solve_and_print(groups, fixed_items);
+}
+
+fn stators() {
+    let groups = &[
+        Group {
+            quantity: None,
+            processor: &CONSTRUCTOR,
+            process: &CRAFT_STEEL_PIPE,
+        },
+        Group {
+            quantity: None,
+            processor: &CONSTRUCTOR,
+            process: &CRAFT_WIRE,
+        },
+        Group {
+            quantity: Some(1.0),
+            processor: &ASSEMBLER,
+            process: &ASSEMBLE_STATOR,
+        }
+    ];
+
+    let fixed_items = &[
+        FixedItem { item: &WIRE, quantity_per_minute: 0.0 },
+        FixedItem { item: &STEEL_PIPE, quantity_per_minute: 0.0 },
+    ];
+
+    solve_and_print(groups, fixed_items);
+}
+
+fn motors() {
+    let groups = &[
+        Group {
+            quantity: None,
+            processor: &CONSTRUCTOR,
+            process: &CRAFT_IRON_ROD,
+        },
+        Group {
+            quantity: None,
+            processor: &CONSTRUCTOR,
+            process: &CRAFT_SCREW,
+        },
+        Group {
+            quantity: None,
+            processor: &ASSEMBLER,
+            process: &ASSEMBLE_ROTOR,
+        },
+        Group {
+            quantity: None,
+            processor: &CONSTRUCTOR,
+            process: &CRAFT_STEEL_PIPE,
+        },
+        Group {
+            quantity: None,
+            processor: &CONSTRUCTOR,
+            process: &CRAFT_WIRE,
+        },
+        Group {
+            quantity: None,
+            processor: &ASSEMBLER,
+            process: &ASSEMBLE_STATOR,
+        },
+        Group {
+            quantity: Some(1.0),
+            processor: &ASSEMBLER,
+            process: &ASSEMBLE_MOTOR,
+        }
+    ];
+
+    let fixed_items = &[
+        FixedItem { item: &IRON_ROD, quantity_per_minute: 0.0 },
+        FixedItem { item: &SCREW, quantity_per_minute: 0.0 },
+        FixedItem { item: &ROTOR, quantity_per_minute: 0.0 },
+        FixedItem { item: &STEEL_PIPE, quantity_per_minute: 0.0 },
+        FixedItem { item: &WIRE, quantity_per_minute: 0.0 },
+        FixedItem { item: &STATOR, quantity_per_minute: 0.0 },
     ];
 
     solve_and_print(groups, fixed_items);
@@ -91,11 +275,6 @@ fn solve_and_print(groups: &[Group], fixed_items: &[FixedItem]) {
     // Recipe matrix.
     #[allow(non_snake_case)]
     let mut R: Matrix<f64> = Matrix::zeros(item_to_row.len(), groups.len());
-
-    println!("{:#?}", groups);
-    println!("{:#?}", fixed_processes);
-    println!("{:#?}", item_to_row);
-    println!("{:#?}", R);
     for (col, group) in groups.iter().enumerate() {
         let Group { process, processor, quantity } = group;
         let crafts_per_second = processor.crafting_speed / process.time;
@@ -160,22 +339,26 @@ fn solve_and_print(groups: &[Group], fixed_items: &[FixedItem]) {
 
     let x = a.solve(b).unwrap();
 
-    println!("Setup");
+    println!("| Quantity      | Recipe                        | Building      |");
+    println!("| ------------- | ----------------------------- | ------------- |");
     for (i, group) in groups.iter().enumerate() {
         println!(
-            "{:>12.2} x {} ({})",
+            "| {:>13.2} | {:<29} | {:<13} |",
             x[i],
             group.process.name,
             group.processor.name
         );
     }
 
-    println!();
-    println!("Balance");
-    for (i, (&item_ptr, _)) in item_to_row.iter().enumerate() {
-        let item: &'static Item = unsafe { &*item_ptr };
-        println!("{:>12.2} {}/m", x[groups.len() + i]*60.0, item.name);
-    }
+    // println!();
+    // println!("Balance");
+    // for (&item_ptr, row) in item_to_row.iter() {
+    //     let item: &'static Item = unsafe { &*item_ptr };
+    //     let change_per_second = x[groups.len() + row];
+    //     if change_per_second != 0.0 {
+    //         println!("{:>12.2} {}/m", x[groups.len() + row]*60.0, item.name);
+    //     }
+    // }
 
     let groups: Vec<FixedGroup> = groups.iter().enumerate().map(|(i, group)| {
         FixedGroup {
@@ -186,11 +369,12 @@ fn solve_and_print(groups: &[Group], fixed_items: &[FixedItem]) {
     }).collect();
 
     println!();
-    println!(" Consumption  Production");
+    println!("| Consumption/m |  Production/m |     Balance/m | Item          |");
+    println!("| ------------- | ------------- | ------------- | ------------- |");
     let cons_prod = calculate_consumption_production(&groups);
     for (item_ptr, (cons, prod)) in cons_prod.into_iter() {
         let item: &'static Item = unsafe { &*item_ptr };
-        println!("{:>12.2} {:>12.2} {}/m", cons*60.0, prod*60.0, item.name);
+        println!("| {:>13.2} | {:>13.2} | {:>13.2} | {:<13} |", cons*60.0, prod*60.0, (prod - cons)*60.0, item.name);
     }
 
     println!();
